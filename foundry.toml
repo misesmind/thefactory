@@ -7,7 +7,8 @@ cache_path  = 'cache_forge'
 fs_permissions = [{ access = "read-write", path = "./"}]
 remappings = [
     "forge-std/=lib/forge-std/src/",
-    "thefactory/=contracts/"
+    "thefactory/=contracts/",
+    "solplot/=lib/solplot/"
 ]
 [rpc_endpoints]
 mainnet_infura = "https://mainnet.infura.io/v3/${INFURA_KEY}"
