@@ -44,4 +44,59 @@ library Array {
         return true;
     }
 
+    function _toLength(
+        address[5] memory values,
+        uint256 newLength
+    ) internal pure returns(address[] memory newValues) {
+        require(newLength >= values.length);
+        newValues = new address[](newLength);
+        for(uint256 cursor =0; cursor < values.length; cursor++) {
+            newValues[cursor] = values[cursor];
+        }
+    }
+
+    function _toLength(
+        address[10] memory values,
+        uint256 newLength
+    ) internal pure returns(address[] memory newValues) {
+        require(newLength >= values.length);
+        newValues = new address[](newLength);
+        for(uint256 cursor =0; cursor < values.length; cursor++) {
+            newValues[cursor] = values[cursor];
+        }
+    }
+
+    function _toLength(
+        address[100] memory values,
+        uint256 newLength
+    ) internal pure returns(address[] memory newValues) {
+        require(newLength >= values.length);
+        newValues = new address[](newLength);
+        for(uint256 cursor =0; cursor < values.length; cursor++) {
+            newValues[cursor] = values[cursor];
+        }
+    }
+
+    function _toLength(
+        address[1000] memory values,
+        uint256 newLength
+    ) internal pure returns(address[] memory newValues) {
+        require(newLength >= values.length);
+        newValues = new address[](newLength);
+        for(uint256 cursor =0; cursor < values.length; cursor++) {
+            newValues[cursor] = values[cursor];
+        }
+    }
+
+    function _toLength(
+        address[] memory values,
+        uint256 newLength
+    ) internal pure returns(address[] memory newValues) {
+        require(newLength >= values.length);
+        newValues = new address[](newLength);
+        for(uint256 cursor =0; cursor < values.length; cursor++) {
+            newValues[cursor] = values[cursor];
+        }
+    }
+
 }

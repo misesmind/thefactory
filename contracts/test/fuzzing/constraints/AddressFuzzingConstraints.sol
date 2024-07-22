@@ -5,11 +5,102 @@ pragma solidity ^0.8.0;
 // solhint-disable state-visibility
 // solhint-disable func-name-mixedcase
 import "forge-std/Test.sol";
+import "thefactory/collections/Collections.sol";
+
+struct AddressFuzzingStruct {
+    AddressSet usedAddresses;
+}
+library AddressFuzzingLayout {
+
+    // using Array for uint256;
+
+    /* ------------------------- EMBEDDED LIBRARIES ------------------------- */
+
+    // address constant ARRAY_ID = address(uint160(uint256(keccak256(type(Array).creationCode))));
+
+    function slot(
+        AddressFuzzingStruct storage table
+    ) external pure returns(bytes32 slot_) {
+        return _slot(table);
+    }
+    
+    function _slot(
+        AddressFuzzingStruct storage table
+    ) internal pure returns(bytes32 slot_) {
+        assembly{slot_ := table.slot}
+    }
+    
+    function layout(
+        bytes32 slot_
+    ) external pure returns(AddressFuzzingStruct storage layout_) {
+        return _layout(slot_);
+    }
+    
+    function _layout(
+        bytes32 storageRange
+    ) internal pure returns(AddressFuzzingStruct storage layout_) {
+        // storageRange ^= STORAGE_RANGE_OFFSET;
+        assembly{layout_.slot := storageRange}
+    }
+}
 
 /**
  * @dev This is an objectively better test.
  */
 contract AddressFuzzingConstraints is Test {
+
+    using AddressSetLayout for AddressSet;
+    using AddressFuzzingLayout for AddressFuzzingStruct;
+
+    /* ------------------------------ LIBRARIES ----------------------------- */
+
+    // using ERC20Layout for ERC20Struct;
+
+    /* ------------------------- EMBEDDED LIBRARIES ------------------------- */
+
+    // TODO Replace with address of deployed library.
+    // Normally handled by usage for storage slot.
+    // Included to facilitate automated audits.
+    // address constant AddressFuzzingLayout_ID = address(ERC20Layout);
+    address constant AddressFuzzingLayout_ID = address(uint160(uint256(keccak256(type(AddressFuzzingLayout).creationCode))));
+
+    /* ---------------------------------------------------------------------- */
+    /*                                 STORAGE                                */
+    /* ---------------------------------------------------------------------- */
+
+    /* -------------------------- STORAGE CONSTANTS ------------------------- */
+  
+    // Defines the default offset applied to all provided storage ranges for use when operating on a struct instance.
+    // Subtract 1 from hashed value to ensure future usage of relevant library address.
+    bytes32 constant internal AddressFuzzingLayout_STORAGE_RANGE_OFFSET = bytes32(uint256(keccak256(abi.encode(AddressFuzzingLayout_ID))) - 1);
+
+    // The default storage range to use with the Layout libraries consumed by this library.
+    // Service libraries are expected to coordinate operations in relation to a interface between other Services and Repos.
+    // bytes32 internal constant ERC20_STORAGE_RANGE = type(IERC20).interfaceId;
+    // bytes32 internal constant ERC20_STORAGE_SLOT = ERC20_STORAGE_RANGE_OFFSET;
+
+    // tag::_erc20()[]
+    /**
+     * @dev internal hook for the default storage range used by this library.
+     * @dev Other services will use their default storage range to ensure consistant storage usage.
+     * @return The default storage range used with repos.
+     */
+    function _addrFuzz(bytes32 slot)
+    internal pure virtual returns(AddressFuzzingStruct storage) {
+        return AddressFuzzingLayout._layout(AddressFuzzingLayout_STORAGE_RANGE_OFFSET ^ slot);
+    }
+
+    function _usedAddrs(
+        address[] memory values
+    ) internal view returns(AddressSet storage) {
+        return _addrFuzz(keccak256(abi.encode(values))).usedAddresses;
+    }
+
+    function _deDup(
+        address[] memory values
+    ) internal view returns(address[] memory) {
+        return _usedAddrs(values)._values();
+    }
 
     modifier isValid(
         address check
@@ -23,12 +114,23 @@ contract AddressFuzzingConstraints is Test {
     modifier areValid(
         address[] memory check
     ) {
+        // for(uint256 cursor = 0; cursor < check.length; cursor++) {
+        //     _notZeroAddr(check[cursor]);
+        //     _notThis(check[cursor]);
+        //     _notPreCompile(check[cursor]);
+        // }
+        _areValid(check);
+        _;
+    }
+
+    function _areValid(
+        address[] memory check
+    ) internal view {
         for(uint256 cursor = 0; cursor < check.length; cursor++) {
             _notZeroAddr(check[cursor]);
             _notThis(check[cursor]);
             _notPreCompile(check[cursor]);
         }
-        _;
     }
 
     function _notZeroAddr(
