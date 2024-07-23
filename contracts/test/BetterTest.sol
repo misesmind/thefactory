@@ -5,11 +5,12 @@ pragma solidity ^0.8.0;
 // solhint-disable state-visibility
 // solhint-disable func-name-mixedcase
 import "forge-std/Test.sol";
+import "thefactory/utils/plot/Plotter.sol";
 import "./fuzzing/BetterFuzzing.sol";
 
 /**
  * @dev This is an objectively better test.
  */
-contract BetterTest is Test, BetterFuzzing {
+contract BetterTest is Test, BetterFuzzing, Plotter {
 
 }

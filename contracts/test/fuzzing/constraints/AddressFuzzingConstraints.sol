@@ -119,7 +119,8 @@ contract AddressFuzzingConstraints is Test {
 
     function deDup(
         address[] memory values
-    ) public view returns(address[] memory) {
+    ) public returns(address[] memory) {
+        _tempUsedAddrs(values)._add(values);
         return _tempUsedAddrs(values)._values();
     }
 

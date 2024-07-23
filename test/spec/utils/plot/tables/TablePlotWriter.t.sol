@@ -10,15 +10,15 @@ import "thefactory/test/BetterTest.sol";
 
 import "thefactory/utils/math/Constants.sol";
 import "thefactory/utils/primitives/Primitives.sol";
-import "thefactory/utils/plot/tables/TableBuilder.sol";
-import "thefactory/utils/plot/tables/TableConsoleWriter.sol";
-import "thefactory/utils/plot/tables/TableCSVWriter.sol";
-import "thefactory/utils/plot/tables/TablePlotWriter.sol";
+import "thefactory/utils/plot/tables/Tables.sol";
+// import "thefactory/utils/plot/tables/TableConsoleWriter.sol";
+// import "thefactory/utils/plot/tables/TableCSVWriter.sol";
+// import "thefactory/utils/plot/tables/TablePlotWriter.sol";
 
 /**
  * @dev Test scenario 
  */
-contract TablePlotWriterTest is BetterTest, TableCSVWriter, TablePlotWriter {
+contract TablePlotWriterTest is BetterTest {
 
     using TableBuilder for Row;
     using TableBuilder for Table;

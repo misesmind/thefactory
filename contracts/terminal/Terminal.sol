@@ -40,4 +40,25 @@ contract Terminal is CommonBase {
         vm.ffi(ffi);
     }
 
+    function date(
+        string memory format
+    ) public returns(string memory) {
+        string[] memory ffi = new string[](2);
+        ffi[0] = "date";
+        ffi[1] = format;
+        return string(vm.ffi(ffi));
+    }
+
+    function rm(
+        string memory path
+        // bool recursive,
+        // bool files
+    ) public {
+        string[] memory ffi = new string[](2);
+        ffi[0] = "rm";
+        ffi[1] = "-rf";
+        ffi[1] = path;
+        vm.ffi(ffi);
+    }
+
 }
