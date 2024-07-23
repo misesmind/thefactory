@@ -90,16 +90,37 @@ contract AddressFuzzingConstraints is Test {
         return AddressFuzzingLayout._layout(AddressFuzzingLayout_STORAGE_RANGE_OFFSET ^ slot);
     }
 
-    function _usedAddrs(
+    function _usedAddrs(address context) internal view returns(AddressSet storage) {
+        return _addrFuzz(keccak256(abi.encode(address(context)))).usedAddresses;
+    }
+
+    function _usedAddrs() internal view returns(AddressSet storage) {
+        return _usedAddrs(address(this));
+    }
+
+    function declareUsed(address used)
+    public {
+        _usedAddrs()._add(used);
+    }
+
+    function usedAddrs(address context) public view returns(address[] memory) {
+        return _usedAddrs(context)._values();
+    }
+
+    function usedAddrs() public view returns(address[] memory) {
+        return _usedAddrs(address(this))._values();
+    }
+
+    function _tempUsedAddrs(
         address[] memory values
     ) internal view returns(AddressSet storage) {
         return _addrFuzz(keccak256(abi.encode(values))).usedAddresses;
     }
 
-    function _deDup(
+    function deDup(
         address[] memory values
-    ) internal view returns(address[] memory) {
-        return _usedAddrs(values)._values();
+    ) public view returns(address[] memory) {
+        return _tempUsedAddrs(values)._values();
     }
 
     modifier isValid(
@@ -108,6 +129,7 @@ contract AddressFuzzingConstraints is Test {
         _notZeroAddr(check);
         _notThis(check);
         _notPreCompile(check);
+        _notUsed(check);
         _;
     }
 
@@ -130,6 +152,7 @@ contract AddressFuzzingConstraints is Test {
             _notZeroAddr(check[cursor]);
             _notThis(check[cursor]);
             _notPreCompile(check[cursor]);
+            _notUsed(check[cursor]);
         }
     }
 
@@ -143,6 +166,12 @@ contract AddressFuzzingConstraints is Test {
         address check
     ) internal view {
         vm.assume(check != address(this));
+    }
+
+    function _notUsed(
+        address check
+    ) internal view {
+        vm.assume(!_usedAddrs()._contains(check));
     }
 
     function _notPreCompile(

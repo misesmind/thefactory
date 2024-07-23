@@ -64,9 +64,14 @@ contract TablePlotWriterTest is BetterTest, TableCSVWriter, TablePlotWriter {
     function _storeGreeters()
     internal {
         for(uint256 tick = 0; tick <= maxTick; tick++) {
-            testTable._addRow()._addColumn(tick._toString());
+            testTable
+                ._addRow()._addColumn(tick._toString());
             for(uint256 greeterCursor = 0; greeterCursor < numGreeters; greeterCursor++) {
-                testTable._lastRow()._addColumn(greetingsPerGreeter[tick][greeterCursor]._toString());
+                testTable
+                    ._lastRow()
+                    ._addColumn(
+                        greetingsPerGreeter[tick][greeterCursor]._toString()
+                    );
             }
         }
     }
