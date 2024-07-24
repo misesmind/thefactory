@@ -177,7 +177,7 @@ abstract contract ERC20Storage {
         uint256 senderBalance = _balanceOf(account);
         if(senderBalance < amount) {
             // Revert if `account` balance is insufficient.
-            revert IERC20.InsufBalance(senderBalance, amount);
+            revert IERC20.ERC20InsufficientBalance(account, senderBalance, amount);
         }
         // Decrease the balance of `account` of `amount`.
         ERC20Storage._balanceOf(
@@ -339,12 +339,12 @@ abstract contract ERC20Storage {
         // address(0) MAY NEVER issue a spending limit approval.
         if(owner == address(0)) {
             // Revert for address(0).
-            revert IERC20.InvalidAccount(owner);
+            revert IERC20.ERC20InvalidReceiver(owner);
         }
         // address(0) MAY NEVER recieve a spending limit approval.
         if(spender == address(0)) {
             // Revert for address(0).
-            revert IERC20.InvalidSpender(spender);
+            revert IERC20.ERC20InvalidReceiver(spender);
         }
         // Set the spending limit of `spender` for `owner`.
         _erc20().allowances[owner][spender] = amount;
@@ -381,7 +381,7 @@ abstract contract ERC20Storage {
         // address(0) MAY NEVER spend it's balance.
         if(msg.sender == address(0)) {
             // Revert if address(0).
-            revert IERC20.InvalidSpender(msg.sender);
+            revert IERC20.ERC20InvalidSpender(msg.sender);
         }
         // Decrease the balance of `sender` by `amount`.
         ERC20Storage._decreaseBalanceOf(sender, amount);
@@ -409,7 +409,7 @@ abstract contract ERC20Storage {
         // Do not allow transfers by `spender` that exceed their spending limit.
         if(currentAllowance < amount) {
             // Revert if `spender` lacks sufficient spending limit.
-            revert IERC20.InsufApproval(currentAllowance, amount);
+            revert IERC20.ERC20InsufficientAllowance(sender, currentAllowance, amount);
         }
         // Decrease the spending limit of `spender` for `sender`.
         ERC20Storage._decreaseAllowance(sender, spender,  amount);

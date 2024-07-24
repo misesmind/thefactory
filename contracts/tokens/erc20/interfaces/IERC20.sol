@@ -44,37 +44,48 @@ interface IERC20 {
     /* ------------------------------- ERRORS ------------------------------- */
 
     /**
-     * @notice Thrown when the provided account is not valid.
-     * @notice Validity determined by implementation.
-     * @notice Typically thrown for address(0).
+     * @dev Indicates an error related to the current `balance` of a `sender`. Used in transfers.
+     * @param sender Address whose tokens are being transferred.
+     * @param balance Current balance for the interacting account.
+     * @param needed Minimum amount required to perform a transfer.
      */
-    error InvalidAccount(address account);
+    error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed);
 
     /**
-     * @notice Thrown when caller is not an approved spender for an account.
+     * @dev Indicates a failure with the token `sender`. Used in transfers.
+     * @param sender Address whose tokens are being transferred.
      */
-    error InvalidSpender(address spender);
+    error ERC20InvalidSender(address sender);
 
     /**
-     * @notice Thrown when recipient of a transfer is not valid.
-     * @notice Validity determined by implementation.
-     * @notice Typically thrown for transfers to address(0).
+     * @dev Indicates a failure with the token `receiver`. Used in transfers.
+     * @param receiver Address to which tokens are being transferred.
      */
-    error InvalidRecipient();
+    error ERC20InvalidReceiver(address receiver);
 
     /**
-     * @notice Thrown when the spending account does not have sufficient balance to support a transfer.
-     * @param currentBalance Account's current balance that is insufficient.
-     * @param request Amount requested for transfer that exceeds the spender's current balance.
+     * @dev Indicates a failure with the `spender`’s `allowance`. Used in transfers.
+     * @param spender Address that may be allowed to operate on tokens without being their owner.
+     * @param allowance Amount of tokens a `spender` is allowed to operate with.
+     * @param needed Minimum amount required to perform a transfer.
      */
-    error InsufBalance(uint256 currentBalance, uint256 request);
+    error ERC20InsufficientAllowance(address spender, uint256 allowance, uint256 needed);
 
     /**
-     * @notice Thrown when a spender was not approved weith a sufficient pending limit.
-     * @param allowance Spender's current spending limit.
-     * @param request The request ttransfer amount that exceeds the current spending limit.
+     * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
+     * @param approver Address initiating an approval operation.
      */
-    error InsufApproval(uint256 allowance, uint256 request);
+    error ERC20InvalidApprover(address approver);
+
+    /**
+     * @dev Indicates a failure with the `spender` to be approved. Used in approvals.
+     * @param spender Address that may be allowed to operate on tokens without being their owner.
+     */
+    error ERC20InvalidSpender(address spender);
+
+    /* ---------------------------------------------------------------------- */
+    /*                                FUNCTIONS                               */
+    /* ---------------------------------------------------------------------- */
 
     // tag::name[]
     /**
