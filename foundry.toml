@@ -8,6 +8,7 @@ fs_permissions = [{ access = "read-write", path = "./"}]
 remappings = [
     "forge-std/=lib/forge-std/src/",
     "thefactory/=contracts/",
+    "factory/=contracts/",
     "solplot/=lib/solplot/"
 ]
 [rpc_endpoints]

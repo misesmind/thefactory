@@ -3,6 +3,11 @@ pragma solidity ^0.8.0;
 
 import "./Constants.sol";
 
+struct Uint512 {
+    uint256 hi; // 256 most significant bits
+    uint256 lo; // 256 least significant bits
+}
+
 /**
  * @dev a proper math lib.
  */
@@ -11,6 +16,9 @@ library BetterMath {
     using BetterMath for uint256;
 
     uint8 constant ERC20_DEFAULT_DECIMALS = 18;
+    uint224 constant Q112 = 2**112;
+
+    error Overflow();
   
     /**
      * @dev Muldiv operation overflow.
@@ -265,6 +273,113 @@ library BetterMath {
      */
     function _unsignedRoundsUp(Rounding rounding) internal pure returns (bool) {
         return uint8(rounding) % 2 == 1;
+    }
+
+    /**
+     * @dev returns the value of `x * y`
+     */
+    function mul512(uint256 x, uint256 y)
+        internal
+        pure
+        returns (Uint512 memory)
+    {
+        uint256 p = _mulModMax(x, y);
+        uint256 q = _unsafeMul(x, y);
+        if (p >= q) {
+            return Uint512({hi: p - q, lo: q});
+        }
+        return Uint512({hi: _unsafeSub(p, q) - 1, lo: q});
+    }
+
+    /**
+     * @dev returns `x * y % (2 ^ 256 - 1)`
+     */
+    function _mulModMax(uint256 x, uint256 y) private pure returns (uint256) {
+        return mulmod(x, y, type(uint256).max);
+    }
+
+    /**
+     * @dev returns `(x * y) % 2 ^ 256`
+     */
+    function _unsafeMul(uint256 x, uint256 y) private pure returns (uint256) {
+        unchecked {
+            return x * y;
+        }
+    }
+
+    /**
+     * @dev returns `(x - y) % 2 ^ 256`
+     */
+    function _unsafeSub(uint256 x, uint256 y) private pure returns (uint256) {
+        unchecked {
+            return x - y;
+        }
+    }
+
+    function div256(Uint512 memory x, uint256 y)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (x.hi == 0) {
+            return x.lo / y;
+        }
+
+        if (x.hi >= y) {
+            revert Overflow();
+        }
+
+        uint256 p = _unsafeSub(0, y) & y; // `p` is the largest power of 2 which `z` is divisible by
+        uint256 q = _div512(x, p); // `n` is divisible by `p` because `n` is divisible by `z` and `z` is divisible by `p`
+        uint256 r = _inv256(y / p); // `z / p = 1 mod 2` hence `inverse(z / p) = 1 mod 2 ^ 256`
+        return _unsafeMul(q, r); // `q * r = (n / p) * inverse(z / p) = n / z`
+    }
+
+    /**
+     * @dev returns the value of `x / pow2n`, given that `x` is divisible by `pow2n`
+     */
+    function _div512(Uint512 memory x, uint256 pow2n)
+        internal
+        pure
+        returns (uint256)
+    {
+        uint256 pow2nInv = _unsafeAdd(_unsafeSub(0, pow2n) / pow2n, 1); // `1 << (256 - n)`
+        return _unsafeMul(x.hi, pow2nInv) | (x.lo / pow2n); // `(x.hi << (256 - n)) | (x.lo >> n)`
+    }
+
+    /**
+     * @dev returns the inverse of `d` modulo `2 ^ 256`, given that `d` is congruent to `1` modulo `2`
+     */
+    function _inv256(uint256 d) private pure returns (uint256) {
+        // approximate the root of `f(x) = 1 / x - d` using the newton–raphson convergence method
+        uint256 x = 1;
+        for (uint256 i = 0; i < 8; i++) {
+            x = _unsafeMul(x, _unsafeSub(2, _unsafeMul(x, d))); // `x = x * (2 - x * d) mod 2 ^ 256`
+        }
+        return x;
+    }
+
+    /**
+     * @dev returns `(x + y) % 2 ^ 256`
+     */
+    function _unsafeAdd(uint256 x, uint256 y) private pure returns (uint256) {
+        unchecked {
+            return x + y;
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                                UQ112x112                               */
+    /* ---------------------------------------------------------------------- */
+
+    // encode a uint112 as a UQ112x112
+    function encode(uint112 y) internal pure returns (uint224 z) {
+        z = uint224(y) * Q112; // never overflows
+    }
+
+    // divide a UQ112x112 by a uint112, returning a UQ112x112
+    function uqdiv(uint224 x, uint112 y) internal pure returns (uint224 z) {
+        z = x / uint224(y);
     }
 
 }
