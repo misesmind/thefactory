@@ -144,7 +144,7 @@ abstract contract ERC4626Storage is ERC20Storage {
         uint256 reserve,
         BetterMath.Rounding rounding
     ) internal view virtual returns (uint256 shares) {
-        string memory sig = "_convertToShares(uint256,uint256,Math.Rounding)";
+        // string memory sig = "_convertToShares(uint256,uint256,Math.Rounding)";
         // _log(type(ERC4626Storage).name, sig, "Entering functions");
         // _log(type(ERC4626Storage).name, 
         //     sig,
