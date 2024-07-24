@@ -1,13 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-// import { IERC20 } from 'contracts/tokens/erc20/interfaces/IERC20.sol';
-
-// import "hardhat/console.sol";
-// import "forge-std/console.sol";
-// import "forge-std/console2.sol";
-
-import "contracts/daosys/core/tokens/erc20/interfaces/IERC20.sol";
+import "thefactory/tokens/erc20/interfaces/IERC20.sol";
 
 /**
  * @title IStandardizedYield ERC20 Vault extension
