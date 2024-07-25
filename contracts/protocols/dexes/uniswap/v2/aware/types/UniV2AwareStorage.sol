@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "thefactory/protocols/dexes/uniSwap/v2/aware/libs/UniV2AwareLayout.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/aware/interfaces/IUniV2Aware.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/interfaces/IUniswapV2Router02.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/interfaces/IUniswapV2Factory.sol";
+import "../libs/UniV2AwareLayout.sol";
+import {IUniV2Aware} from "../interfaces/IUniV2Aware.sol";
+import {IUniswapV2Router02} from "../../interfaces/IUniswapV2Router02.sol";
+import {IUniswapV2Factory} from "../../interfaces/IUniswapV2Factory.sol";
 
 abstract contract UniV2AwareStorage {
 

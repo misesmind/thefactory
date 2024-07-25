@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "thefactory/tokens/erc5115/types/ERC5115Target.sol";
-import {UniV2Utils} from "thefactory/protocols/dexes/uniSwap/v2/libs/UniV2Utils.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/interfaces/IUniswapV2Pair.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/interfaces/IUniswapV2Factory.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/interfaces/IUniswapV2Router02.sol";
-import "thefactory/protocols/dexes/uniSwap/v2/aware/types/UniV2AwareStorage.sol";
+import "./ERC5115Target.sol";
+import {UniV2Utils} from "../../../protocols/dexes/uniswap/v2/libs/UniV2Utils.sol";
+import "../../../protocols/dexes/uniswap/v2/interfaces/IUniswapV2Pair.sol";
+import "../../../protocols/dexes/uniswap/v2/interfaces/IUniswapV2Factory.sol";
+import "../../../protocols/dexes/uniswap/v2/interfaces/IUniswapV2Router02.sol";
+import "../../../protocols/dexes/uniswap/v2/aware/types/UniV2AwareStorage.sol";
 // import "contracts/daosys/core/math/Math.sol";
 // import {SafeERC20} from "contracts/tokens/erc20/libs/utils/SafeERC20.sol";
 // import "contracts/daosys/Logged.sol";
-import "thefactory/utils/primitives/Primitives.sol";
+import "../../../utils/primitives/Primitives.sol";
 // import "contracts/daosys/core/primitives/UInt.sol";
 
 // import "hardhat/console.sol";
@@ -30,25 +30,25 @@ ERC5115Target, UniV2AwareStorage
     constructor(
         address yieldToken_
     ) {
-        address token0 = IUniswapV2Pair(yieldToken_).token0();
-        address token1 = IUniswapV2Pair(yieldToken_).token1();
+        // address token0 = IUniswapV2Pair(yieldToken_).token0();
+        // address token1 = IUniswapV2Pair(yieldToken_).token1();
         // require(
         //     yieldToken == IUniswapV2Factory(
         //         IUniswapV2Pair(yieldToken).factory()
         //     ).getPair(token0, token1)
         // );
-        address[] memory tokensIn = new address[](3);
+        address[] memory tokensIn = new address[](1);
         tokensIn[0] = yieldToken_;
-        tokensIn[1] = token0;
-        tokensIn[2] = token1;
+        // tokensIn[1] = token0;
+        // tokensIn[2] = token1;
         // address[] memory tokensOut = new address[](3);
         // tokensOut[0] = yieldToken_;
         // tokensOut[1] = token0;
         // tokensOut[2] = token1;
-        address[] memory tokensOut = new address[](2);
-        // tokensOut[0] = yieldToken_;
-        tokensOut[0] = token0;
-        tokensOut[1] = token1;
+        address[] memory tokensOut = new address[](1);
+        tokensOut[0] = yieldToken_;
+        // tokensOut[0] = token0;
+        // tokensOut[1] = token1;
         _init5115(
             yieldToken_,
             tokensIn,
