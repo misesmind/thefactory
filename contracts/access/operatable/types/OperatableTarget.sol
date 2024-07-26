@@ -29,7 +29,7 @@ contract OperatableTarget is OwnableTarget, IOperatable {
         _;
     }
 
-    function isOperator(address query) public view returns(bool) {
+    function isOperator(address query) public view virtual returns(bool) {
         return _operatable().isOperator[query];
     }
 
@@ -40,7 +40,7 @@ contract OperatableTarget is OwnableTarget, IOperatable {
     function setOperator(
         address operator,
         bool status
-    ) external virtual onlyOwnerOrOperator(msg.sender) returns(bool) {
+    ) public virtual onlyOwnerOrOperator(msg.sender) returns(bool) {
         // require(msg.sender == minter, "Operator: caller is not the minter");
         // operators[operator] = status;
         _isOperator(operator, status);
