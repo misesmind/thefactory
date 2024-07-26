@@ -2,14 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "./ERC20MintableTarget.sol";
-import "thefactory/security/operatable/types/OperatableTarget.sol";
+import "thefactory/access/operatable/types/OperatableTarget.sol";
+import "../interfaces/IERC20OperatableMintable.sol";
 
-contract ERC20OpertableMintableTarget is ERC20MintableTarget, OperatableTarget {
+contract ERC20OpertableMintableTarget is ERC20MintableTarget, OperatableTarget, IERC20OperatableMintable {
 
     function mint(
         uint256 amount,
         address to
-    ) external payable virtual override(ERC20MintableTarget) onlyOperator(msg.sender) returns(uint256) {
+    ) external payable virtual override(IERC20OperatableMintable, ERC20MintableTarget) onlyOperator(msg.sender) returns(uint256) {
         _mint(amount, to);
         return amount;
     }
@@ -17,9 +18,23 @@ contract ERC20OpertableMintableTarget is ERC20MintableTarget, OperatableTarget {
     function burn(
         uint256 amount,
         address to
-    ) external virtual override(ERC20MintableTarget) onlyOperator(msg.sender) returns(uint256) {
+    ) external virtual override(IERC20OperatableMintable, ERC20MintableTarget) onlyOperator(msg.sender) returns(uint256) {
         _burn(amount, to);
         return amount;
+    }
+
+    function isOperator(address query) public view override(IERC20OperatableMintable, OperatableTarget) returns(bool) {
+        return _operatable().isOperator[query];
+    }
+
+    function setOperator(
+        address operator,
+        bool status
+    ) public virtual override(IERC20OperatableMintable, OperatableTarget) returns(bool) {
+        // require(msg.sender == minter, "Operator: caller is not the minter");
+        // operators[operator] = status;
+        OperatableTarget.setOperator(operator, status);
+        return true;
     }
 
 }

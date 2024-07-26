@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./IERC20Mintable.sol";
-import "thefactory/security/operatable/interface/IOperatable.sol";
+import "thefactory/access/operatable/interface/IOperatable.sol";
 
 interface IERC20OperatableMintable is IERC20Mintable, IOperatable {
 
@@ -15,6 +15,9 @@ interface IERC20OperatableMintable is IERC20Mintable, IOperatable {
         uint256 amount,
         address to
     ) external returns(uint256);
+
+    function isOperator(address query)
+    external view returns(bool);
 
     function setOperator(
         address operator,
