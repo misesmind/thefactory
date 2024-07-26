@@ -5,7 +5,7 @@ import "../libs/OperatableLayout.sol";
 import "../interface/IOperatable.sol";
 import "../../ownable/types/OwnableTarget.sol";
 
-contract OperatableTarget is OwnableTarget {
+contract OperatableTarget is OwnableTarget, IOperatable {
 
     using OperatableLayout for OperatableStruct;
 
@@ -20,16 +20,16 @@ contract OperatableTarget is OwnableTarget {
     }
 
     modifier onlyOperator(address query) {
-        require(_isOperator(query), "Operator: caller is not an operator");
+        require(isOperator(query), "Operator: caller is not an operator");
         _;
     }
 
     modifier onlyOwnerOrOperator(address query) {
-        require(_isOperator(query) || _isOwner(query));
+        require(isOperator(query) || _isOwner(query));
         _;
     }
 
-    function _isOperator(address query) internal view returns(bool) {
+    function isOperator(address query) public view returns(bool) {
         return _operatable().isOperator[query];
     }
 
