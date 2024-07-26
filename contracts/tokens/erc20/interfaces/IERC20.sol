@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {IERC20Errors} from "../../erc6903/interfaces/IERC6093.sol";
+
 // tag::IERC20[]
 /**
  * @title ERC20 interface
  * @author who?
  * @dev see https://github.com/ethereum/EIPs/issues/20
  */
-interface IERC20 {
+interface IERC20 is IERC20Errors {
 
     /* ------------------------------- EVENTS ------------------------------- */
 
@@ -43,45 +45,45 @@ interface IERC20 {
 
     /* ------------------------------- ERRORS ------------------------------- */
 
-    /**
-     * @dev Indicates an error related to the current `balance` of a `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
-     * @param balance Current balance for the interacting account.
-     * @param needed Minimum amount required to perform a transfer.
-     */
-    error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed);
+    // /**
+    //  * @dev Indicates an error related to the current `balance` of a `sender`. Used in transfers.
+    //  * @param sender Address whose tokens are being transferred.
+    //  * @param balance Current balance for the interacting account.
+    //  * @param needed Minimum amount required to perform a transfer.
+    //  */
+    // error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed);
 
-    /**
-     * @dev Indicates a failure with the token `sender`. Used in transfers.
-     * @param sender Address whose tokens are being transferred.
-     */
-    error ERC20InvalidSender(address sender);
+    // /**
+    //  * @dev Indicates a failure with the token `sender`. Used in transfers.
+    //  * @param sender Address whose tokens are being transferred.
+    //  */
+    // error ERC20InvalidSender(address sender);
 
-    /**
-     * @dev Indicates a failure with the token `receiver`. Used in transfers.
-     * @param receiver Address to which tokens are being transferred.
-     */
-    error ERC20InvalidReceiver(address receiver);
+    // /**
+    //  * @dev Indicates a failure with the token `receiver`. Used in transfers.
+    //  * @param receiver Address to which tokens are being transferred.
+    //  */
+    // error ERC20InvalidReceiver(address receiver);
 
-    /**
-     * @dev Indicates a failure with the `spender`’s `allowance`. Used in transfers.
-     * @param spender Address that may be allowed to operate on tokens without being their owner.
-     * @param allowance Amount of tokens a `spender` is allowed to operate with.
-     * @param needed Minimum amount required to perform a transfer.
-     */
-    error ERC20InsufficientAllowance(address spender, uint256 allowance, uint256 needed);
+    // /**
+    //  * @dev Indicates a failure with the `spender`’s `allowance`. Used in transfers.
+    //  * @param spender Address that may be allowed to operate on tokens without being their owner.
+    //  * @param allowance Amount of tokens a `spender` is allowed to operate with.
+    //  * @param needed Minimum amount required to perform a transfer.
+    //  */
+    // error ERC20InsufficientAllowance(address spender, uint256 allowance, uint256 needed);
 
-    /**
-     * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
-     * @param approver Address initiating an approval operation.
-     */
-    error ERC20InvalidApprover(address approver);
+    // /**
+    //  * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
+    //  * @param approver Address initiating an approval operation.
+    //  */
+    // error ERC20InvalidApprover(address approver);
 
-    /**
-     * @dev Indicates a failure with the `spender` to be approved. Used in approvals.
-     * @param spender Address that may be allowed to operate on tokens without being their owner.
-     */
-    error ERC20InvalidSpender(address spender);
+    // /**
+    //  * @dev Indicates a failure with the `spender` to be approved. Used in approvals.
+    //  * @param spender Address that may be allowed to operate on tokens without being their owner.
+    //  */
+    // error ERC20InvalidSpender(address spender);
 
     /* ---------------------------------------------------------------------- */
     /*                                FUNCTIONS                               */
