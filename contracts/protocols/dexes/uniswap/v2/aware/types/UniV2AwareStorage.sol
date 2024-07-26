@@ -66,6 +66,12 @@ abstract contract UniV2AwareStorage {
         _uniV2Factory(factory);
     }
 
+    function _initUniV2Aware(
+        IUniswapV2Factory factory
+    ) internal virtual {
+        _uniV2Factory(factory);
+    }
+
     function _uniV2Protocol() internal view virtual returns(address factory, address router) {
         return (address(_uniV2Factory()), address(_uniV2Router()));
     }
