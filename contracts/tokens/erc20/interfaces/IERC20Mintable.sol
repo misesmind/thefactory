@@ -14,10 +14,5 @@ interface IERC20Mintable is IERC20 {
         uint256 amount,
         address to
     ) external returns(uint256);
-
-    // function setOperator(
-    //     address operator,
-    //     bool status
-    // ) external;
     
 }
