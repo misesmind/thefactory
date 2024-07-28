@@ -10,6 +10,7 @@ import {IERC721Errors} from "../../erc6903/interfaces/IERC6093.sol";
 contract ERC721Storage is ERC20Storage {
 
     using ERC721Layout for ERC721Struct;
+    using Uint256CounterLayout for Uint256CounterStruct;
 
     address constant ERC721LAYOUT_ID = address(uint160(uint256(keccak256(type(ERC721Layout).creationCode))));
     bytes32 constant internal ERC721_STORAGE_RANGE_OFFSET = bytes32(uint256(keccak256(abi.encode(ERC721LAYOUT_ID))) - 1);
@@ -23,6 +24,16 @@ contract ERC721Storage is ERC20Storage {
 
     function _initERC721(string memory name_, string memory symbol_) internal {
         _setMetadata(name_, symbol_);
+    }
+
+    function _currentTokenId()
+    internal view returns (uint256) {
+        return _erc721().maxTokenId._currentCount();
+    }
+
+    function _nextTokenId()
+    internal returns ( uint256 ) {
+        return _erc721().maxTokenId._nextCount();
     }
 
     function _owner(

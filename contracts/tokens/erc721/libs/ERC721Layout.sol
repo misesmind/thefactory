@@ -1,13 +1,18 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import "thefactory/counters/libs/Uint256CounterLayout.sol";
+
 struct ERC721Struct {
+    Uint256CounterStruct maxTokenId;
     mapping(uint256 tokenId => address) owner;
     mapping(uint256 tokenId => address) approvals;
     mapping(address owner => mapping(address operator => bool)) operatorApprovals;
 }
 
 library ERC721Layout {
+
+    using Uint256CounterLayout for Uint256CounterStruct;
 
     // tag::slot[]
     /**
