@@ -134,6 +134,13 @@ contract AddressFuzzingConstraints is Test {
         _;
     }
 
+    modifier notZeroAddr(
+        address check
+    ) {
+        _notZeroAddr(check);
+        _;
+    }
+
     modifier areValid(
         address[] memory check
     ) {

@@ -1,0 +1,193 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+// import "hardhat/console.sol";
+import "forge-std/console.sol";
+// import "forge-std/console2.sol";
+
+import "thefactory/utils/math/BetterMath.sol";
+
+library BetterUniV2Utils {
+
+    using BetterMath for uint256;
+
+    uint internal constant _MINIMUM_LIQUIDITY = 10**3;
+
+    function _calcDeposit(
+        uint256 amount0Deposit,
+        uint256 amount1Deposit,
+        uint256 lpTotalSupply,
+        uint256 lpReserve0,
+        uint256 lpReserve1
+    ) internal pure returns(uint256 lpAmount) {
+         lpAmount = lpTotalSupply == 0
+            ? BetterMath._sqrt((amount0Deposit * amount1Deposit)) - _MINIMUM_LIQUIDITY
+            : BetterMath._min(
+                (amount0Deposit * lpTotalSupply) / lpReserve0,
+                (amount1Deposit * lpTotalSupply) / lpReserve1
+            );
+    }
+
+    // tag::_quote[]
+    // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
+    function _calcEquiv(
+        uint amountA,
+        uint reserveA,
+        uint reserveB
+    ) internal pure returns (uint amountB) {
+        require(amountA > 0, "UniV2Utils: INSUFFICIENT_AMOUNT");
+        require(reserveA > 0 && reserveB > 0, "UniV2Utils: INSUFFICIENT_LIQUIDITY");
+        amountB = (amountA * reserveB) / reserveA;
+    }
+    // end::_quote[]
+
+    // tag::_quoteSwapOut[]
+    /**
+     * @dev Provides the sale amount for a desired proceeds amount.
+     * @param amountOut The desired swap proceeds.
+     * @param reserveIn The LP reserve of the sale token.
+     * @param reserveOut The LP reserve of the proceeds tokens.
+     * @return amountIn The amount of token to sell to get the desired proceeds.
+     */
+    function _calcSaleAmount(
+        uint amountOut,
+        uint reserveIn,
+        uint reserveOut
+    ) internal pure returns (uint amountIn) {
+        // TODO refactor to custom error
+        require(amountOut > 0, "BetterUniV2Utils: INSUFFICIENT_OUTPUT_AMOUNT");
+        // TODO refactor to custom error
+        require(reserveIn > 0 && reserveOut > 0, "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY");
+        uint numerator = (reserveIn * amountOut) * (1000);
+        uint denominator = (reserveOut - amountOut) * (997);
+        amountIn = (numerator / denominator) + (1);
+    }
+    // end::_quoteSwapOut[]
+
+    // tag::_quoteSwapIn[]
+    /**
+     * @dev Provides the proceeds of a sale of a provided amount.
+     * @param amountIn The amount of token for which too quote a sale.
+     * @param reserveIn The LP reserve of the sale token.
+     * @param reserveOut The LP reserve of the proceeds tokens.
+     * @return amountOut The proceeds of selling `amountin`.
+     */
+    function _calcSaleProceeds(
+        uint amountIn,
+        uint reserveIn,
+        uint reserveOut
+    ) internal pure returns (uint amountOut) {
+        console.log("enter _calcSaleProceeds");
+        // TODO refactor to custom error
+        console.log("amountIn = %s", amountIn);
+        require(amountIn > 0, "BetterUniV2Utils: INSUFFICIENT_INPUT_AMOUNT");
+        // TODO refactor to custom error
+        console.log("reserveIn = %s", reserveIn);
+        console.log("reserveOut = %s", reserveOut);
+        require(reserveIn > 0 && reserveOut > 0, "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY");
+        uint amountInWithFee = (amountIn * 997);
+        console.log("amountInWithFee = %s", amountInWithFee);
+        uint numerator = (amountInWithFee * reserveOut);
+        console.log("numerator = %s", numerator);
+        uint denominator = (reserveIn * 1000) + (amountInWithFee);
+        console.log("denominator = %s", denominator);
+        amountOut = numerator / denominator;
+        console.log("amountOut = %s", amountOut);
+        console.log("exit _calcSaleProceeds");
+    }
+    // end::_quoteSwapIn[]
+
+    // tag::_ownedReserves[]
+    function _calcReserveShares(
+        uint256 ownedLPAmount,
+        uint256 lpTotalSupply,
+        uint256 totalReserve0,
+        uint256 totalReserve1
+    ) internal pure returns(
+        uint256 ownedReserve0,
+        uint256 ownedReserve1
+    ) {
+        // using balances ensures pro-rata distribution
+        ownedReserve0 = ((ownedLPAmount * totalReserve0) / lpTotalSupply);
+        ownedReserve1 = ((ownedLPAmount * totalReserve1) / lpTotalSupply);
+    }
+    // end::_ownedReserves[]
+
+    function _calcWithdrawAmt(
+        uint256 targetOutAmt,
+        uint256 lpTotalSupply,
+        uint256 outRes,
+        uint256 opRes
+    ) internal pure returns(uint256 lpWithdrawAmt) {
+        console.log("enter _calcWithdrawAmt");
+        console.log("targetOutAmt = %s", targetOutAmt);
+        console.log("lpTotalSupply = %s", lpTotalSupply);
+        console.log("outRes = %s", outRes);
+        console.log("opRes = %s", opRes);
+        uint256 opTAmt = _calcEquiv(
+            targetOutAmt,
+            outRes,
+            opRes
+        );
+        console.log("opTAmt = %s", opTAmt);
+        lpWithdrawAmt = _calcDeposit(
+            targetOutAmt,
+            opTAmt,
+            // _calcEquiv(
+            //     targetOutAmt,
+            //     outRes,
+            //     opRes
+            // ),
+            lpTotalSupply,
+            outRes,
+            opRes
+        );
+        console.log("lpWithdrawAmt = %s", lpWithdrawAmt);
+        console.log("exit _calcWithdrawAmt");
+    }
+
+    function _calcSwapDepositAmtIn(
+        uint256 reserveIn,
+        uint256 userIn
+    ) internal pure returns (uint256 swapAmount_) {
+      return (
+            BetterMath._sqrt(
+                reserveIn 
+                * (
+                    (userIn * 3988000) + (reserveIn * 3988009)
+                )
+            ) - (reserveIn * 1997)
+        ) / 1994;
+    }
+
+    // // tag::_quoteWithdrawalSwap[]
+    // /**
+    //  * @custom:funcsig _quoteWithdrawalSwap(uint256, uint256, uint256, uint256)
+    //  */
+    // function _calcWithdrawalSwap(
+    //     uint256 ownedLPAmount,
+    //     uint256 lpTotalSupply,
+    //     uint256 indexedTokenTotalReserve,
+    //     uint256 opposingTokenTotalReserve
+    // ) internal pure returns(uint256 exitAmount) {
+
+    //     (
+    //         uint256 indexedTokenOwnedReserve,
+    //         uint256 opposingTokenOwnedReserve
+    //     ) = _calcReserveShares(
+    //         ownedLPAmount,
+    //         lpTotalSupply,
+    //         indexedTokenTotalReserve,
+    //         opposingTokenTotalReserve
+    //     );
+    
+    //     exitAmount = _calcWithdrawAmt(
+    //         opposingTokenTotalReserve,
+    //         opposingTokenOwnedReserve,
+    //         indexedTokenTotalReserve,
+    //         indexedTokenOwnedReserve
+    //     );
+    // }
+    // // end::_quoteWithdrawalSwap[]
+
+}

@@ -376,6 +376,13 @@ library UniV2Utils {
     }
 
     // tag::_quoteSwapOut[]
+    /**
+     * @dev Provides the sale amount for a desired proceeds amount.
+     * @param amountOut The desired swap proceeds.
+     * @param reserveIn The LP reserve of the sale token.
+     * @param reserveOut The LP reserve of the proceeds tokens.
+     * @return amountIn The amount of token to sell to get the desired proceeds.
+     */
     function _quoteSwapOut(
         uint amountOut,
         uint reserveIn,
@@ -392,6 +399,13 @@ library UniV2Utils {
     // end::_quoteSwapOut[]
 
     // tag::_quoteSwapIn[]
+    /**
+     * @dev Provides the proceeds of a sale of a provided amount.
+     * @param amountIn The amount of token for which too quote a sale.
+     * @param reserveIn The LP reserve of the sale token.
+     * @param reserveOut The LP reserve of the proceeds tokens.
+     * @return amountOut The proceeds of selling `amountin`.
+     */
     function _quoteSwapIn(
         uint amountIn,
         uint reserveIn,
@@ -461,7 +475,8 @@ library UniV2Utils {
             amountToSwap
         );
 
-        IERC20(saleToken)._safeIncreaseAllowance(uniV2Router, saleTokenAmount);
+        // IERC20(saleToken)._safeIncreaseAllowance(uniV2Router, saleTokenAmount);
+        IERC20(saleToken)._safeIncreaseAllowance(uniV2Router, saleTokenDeposit);
         IERC20(opposingToken_)._safeIncreaseAllowance(uniV2Router, opposingTokenAmount);
 
         lpTokenAmount = UniV2Utils._deposit(

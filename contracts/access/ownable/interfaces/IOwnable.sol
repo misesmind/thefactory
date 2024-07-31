@@ -11,7 +11,7 @@ interface IOwnable {
 
     error NotProposed(address caller);
 
-    event TransferProposed();
+    // event TransferProposed();
 
     event TransferProposed(address indexed proposedOwner);
 
