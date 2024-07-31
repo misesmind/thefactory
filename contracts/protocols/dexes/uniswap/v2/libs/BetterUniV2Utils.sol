@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
 // import "hardhat/console.sol";
@@ -160,34 +160,28 @@ library BetterUniV2Utils {
         ) / 1994;
     }
 
-    // // tag::_quoteWithdrawalSwap[]
-    // /**
-    //  * @custom:funcsig _quoteWithdrawalSwap(uint256, uint256, uint256, uint256)
-    //  */
-    // function _calcWithdrawalSwap(
-    //     uint256 ownedLPAmount,
-    //     uint256 lpTotalSupply,
-    //     uint256 indexedTokenTotalReserve,
-    //     uint256 opposingTokenTotalReserve
-    // ) internal pure returns(uint256 exitAmount) {
+    function _calcSwapDeposit(
+        uint256 lpTotalSupply,
+        uint256 saleTokenAmount,
+        uint256 saleTokenReserve,
+        uint256 opposingTokenReserve
+    ) internal pure returns(uint256 lpProceeds) {
+        uint256 amountToSwap = _calcSwapDepositAmtIn(saleTokenReserve, saleTokenAmount);
+        uint256 saleTokenDeposit = saleTokenAmount - amountToSwap;
+        uint256 opposingTokenDeposit = _calcSaleProceeds(
+            amountToSwap,
+            saleTokenReserve,
+            opposingTokenReserve
+        );
 
-    //     (
-    //         uint256 indexedTokenOwnedReserve,
-    //         uint256 opposingTokenOwnedReserve
-    //     ) = _calcReserveShares(
-    //         ownedLPAmount,
-    //         lpTotalSupply,
-    //         indexedTokenTotalReserve,
-    //         opposingTokenTotalReserve
-    //     );
-    
-    //     exitAmount = _calcWithdrawAmt(
-    //         opposingTokenTotalReserve,
-    //         opposingTokenOwnedReserve,
-    //         indexedTokenTotalReserve,
-    //         indexedTokenOwnedReserve
-    //     );
-    // }
-    // // end::_quoteWithdrawalSwap[]
+        lpProceeds = _calcDeposit(
+            saleTokenDeposit,
+            opposingTokenDeposit,
+            // IUniswapV2Pair(pair).totalSupply(),
+            lpTotalSupply,
+            saleTokenReserve + amountToSwap,
+            opposingTokenReserve - opposingTokenDeposit
+        );
+    }
 
 }

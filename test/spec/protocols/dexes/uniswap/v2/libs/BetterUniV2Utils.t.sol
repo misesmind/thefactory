@@ -413,4 +413,94 @@ contract BetterUniV2UtilsTest is BetterTest {
         // assertTrue(false);
     }
 
+    function test_calcSwapDeposit(
+        uint112 amount0In,
+        uint112 token0DepositAmt,
+        uint112 token1depositAmt
+    ) public {
+        console.log("type(uint112).max = %s", type(uint112).max);
+        token0DepositAmt = uint112(bound(
+            token0DepositAmt,
+            TENK_WAD,
+            type(uint112).max / 2
+        ));
+        token1depositAmt = uint112(bound(
+            token1depositAmt,
+            TENK_WAD,
+            type(uint112).max / 2
+        ));
+        token0.mint(token0DepositAmt, address(basePool));
+        token1.mint(token1depositAmt, address(basePool));
+        basePool.mint(address(this));
+        console.log("lpBal = %s", basePool.balanceOf(address(this)));
+        console.log("token 0 lpBal = %s", token0.balanceOf(address(basePool)));
+        // 1999999999999999999996
+        console.log("token 1 lpBal = %s", token1.balanceOf(address(basePool)));
+        amount0In = uint112(bound(
+            // 746022857316198
+            amount0In,
+            ONE_WAD / 2,
+            (token0DepositAmt / 4)
+        ));
+        // 1298074214630144358933410007488625
+        console.log("amount0In = %s", amount0In);
+        uint256 token0LPRes = token0.balanceOf(address(basePool));
+        uint256 token1LPRes = token1.balanceOf(address(basePool));
+        uint256 lpSwapDepositProceeds = BetterUniV2Utils._calcSwapDeposit(
+            // address lpTotalSupply,
+            basePool.totalSupply(),
+            // uint256 saleTokenAmount,
+            amount0In,
+            // uint256 saleTokenReserve,
+            token0LPRes,
+            // uint256 opposingTokenReserve
+            token1LPRes
+        );
+
+        uint256 amount0SwapAmt = BetterUniV2Utils._calcSwapDepositAmtIn(
+            token0.balanceOf(address(basePool)),
+            amount0In
+        );
+        // 1298074214630144358933410007488625
+        // 6347097647126188996340345638430783416
+        console.log("amount0SwapAmt = %s", amount0SwapAmt);
+        uint256 amount1Out = BetterUniV2Utils._calcSaleProceeds(
+            amount0SwapAmt,
+            token0.balanceOf(address(basePool)),
+            token1.balanceOf(address(basePool))
+        );
+        console.log("amount1Out = %s", amount1Out);
+        token0.mint(amount0SwapAmt, address(basePool));
+        basePool.swap(
+            0,
+            amount1Out,
+            address(this),
+            ""
+        );
+        console.log("token 0 deposit amt = %s", token0.balanceOf(address(this)));
+        console.log("token 1 deposit amt = %s", token1.balanceOf(address(this)));
+        // token0.transfer(
+        //     address(basePool),
+        //     // amount0In
+        //     token0.balanceOf(address(this))
+        // );
+        token0.mint(amount0In - amount0SwapAmt, address(basePool));
+        token1.transfer(
+            address(basePool),
+            // amount1Out
+            token1.balanceOf(address(this))
+        );
+        basePool.transfer(address(market), basePool.balanceOf(address(this)));
+        basePool.mint(address(this));
+        assertLe(
+            token0.balanceOf(address(this)),
+            1
+        );
+        assertGe(
+            basePool.balanceOf(address(this)),
+            lpSwapDepositProceeds
+        );
+        // assertTrue(false);
+    }
+
 }
