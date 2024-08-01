@@ -97,21 +97,19 @@ library BetterUniV2Utils {
     }
     // end::_quoteSwapIn[]
 
-    // tag::_ownedReserves[]
     function _calcReserveShares(
         uint256 ownedLPAmount,
         uint256 lpTotalSupply,
-        uint256 totalReserve0,
-        uint256 totalReserve1
+        uint256 totalReserveA,
+        uint256 totalReserveB
     ) internal pure returns(
-        uint256 ownedReserve0,
-        uint256 ownedReserve1
+        uint256 ownedReserveA,
+        uint256 ownedReserveB
     ) {
         // using balances ensures pro-rata distribution
-        ownedReserve0 = ((ownedLPAmount * totalReserve0) / lpTotalSupply);
-        ownedReserve1 = ((ownedLPAmount * totalReserve1) / lpTotalSupply);
+        ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
+        ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
     }
-    // end::_ownedReserves[]
 
     function _calcWithdrawAmt(
         uint256 targetOutAmt,
@@ -119,17 +117,17 @@ library BetterUniV2Utils {
         uint256 outRes,
         uint256 opRes
     ) internal pure returns(uint256 lpWithdrawAmt) {
-        console.log("enter _calcWithdrawAmt");
-        console.log("targetOutAmt = %s", targetOutAmt);
-        console.log("lpTotalSupply = %s", lpTotalSupply);
-        console.log("outRes = %s", outRes);
-        console.log("opRes = %s", opRes);
+        // console.log("enter _calcWithdrawAmt");
+        // console.log("targetOutAmt = %s", targetOutAmt);
+        // console.log("lpTotalSupply = %s", lpTotalSupply);
+        // console.log("outRes = %s", outRes);
+        // console.log("opRes = %s", opRes);
         uint256 opTAmt = _calcEquiv(
             targetOutAmt,
             outRes,
             opRes
         );
-        console.log("opTAmt = %s", opTAmt);
+        // console.log("opTAmt = %s", opTAmt);
         lpWithdrawAmt = _calcDeposit(
             targetOutAmt,
             opTAmt,
@@ -142,8 +140,8 @@ library BetterUniV2Utils {
             outRes,
             opRes
         );
-        console.log("lpWithdrawAmt = %s", lpWithdrawAmt);
-        console.log("exit _calcWithdrawAmt");
+        // console.log("lpWithdrawAmt = %s", lpWithdrawAmt);
+        // console.log("exit _calcWithdrawAmt");
     }
 
     function _calcSwapDepositAmtIn(

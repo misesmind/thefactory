@@ -8,7 +8,48 @@ import "./BetterUniV2Utils.sol";
 library BetterUniV2Service {
 
     using BetterUniV2Utils for uint256;
+    using BetterUniV2Service for IUniswapV2Pair;
     using SafeERC20 for IERC20;
+
+    function _correlateAmounts(
+        IUniswapV2Pair pair,
+        IERC20 knownToken,
+        uint256 token0Amount,
+        uint256 token1Amount
+    ) internal view returns(
+        uint256 knownTokenAmount,
+        IERC20 opposingToken_,
+        uint256 opposingTokenAmount
+    ) {
+        address token0 = IUniswapV2Pair(pair).token0();
+        (
+            knownTokenAmount,
+            opposingToken_,
+            opposingTokenAmount
+        ) = address(knownToken) == token0
+            ? (token0Amount, IERC20(IUniswapV2Pair(pair).token1()), token1Amount)
+            : (token1Amount, IERC20(token0), token0Amount);
+    }
+
+    function _depositDirect(
+        IUniswapV2Pair pair,
+        IERC20 tokenA,
+        IERC20 tokenB,
+        uint256 tokenAAmount,
+        uint256 tokenBAmount
+    ) internal returns (uint256 lpTokenAmount) {
+        tokenA._safeTransfer(address(pair), tokenAAmount);
+        tokenB._safeTransfer(address(pair), tokenBAmount);
+        lpTokenAmount = pair.mint(address(this));
+    }
+
+    function _withdrawDirect(
+        IUniswapV2Pair pool,
+        uint256 amt
+    ) internal returns(uint amount0, uint amount1) {
+        pool.transfer(address(pool), amt);
+        (amount0, amount1) = pool.burn(address(this));
+    }
 
     function _swapDirect(
         IUniswapV2Pair pair,
@@ -31,7 +72,8 @@ library BetterUniV2Service {
             ? (totalReserve0, totalReserve1)
             : (totalReserve1, totalReserve0);
 
-        proceedsAmount = amountToSell._calcSaleProceeds(
+        proceedsAmount = amountToSell
+        ._calcSaleProceeds(
             soldTokenReserve,
             proceedsTokenReserve
         );
@@ -43,20 +85,9 @@ library BetterUniV2Service {
             ? (uint256(0), proceedsAmount)
             : (proceedsAmount, uint256(0));
 
-        IERC20(soldToken)._safeTransfer(address(pair), amountToSell);
+        IERC20(soldToken)
+            ._safeTransfer(address(pair), amountToSell);
         pair.swap(amount0Out, amount1Out, address(this), new bytes(0));
-    }
-
-    function _depositDirect(
-        IUniswapV2Pair pair,
-        IERC20 tokenA,
-        IERC20 tokenB,
-        uint256 tokenAAmount,
-        uint256 tokenBAmount
-    ) internal returns (uint256 lpTokenAmount) {
-        tokenA._safeTransfer(address(pair), tokenAAmount);
-        tokenB._safeTransfer(address(pair), tokenBAmount);
-        lpTokenAmount = pair.mint(address(this));
     }
 
     function _swapDepositDirect(
@@ -66,32 +97,18 @@ library BetterUniV2Service {
         uint256 saleTokenReserve,
         IERC20 opposingToken_
     ) internal returns(uint256 lpTokenAmount) {
-        // (
-        //     uint256 saleTokenReserve,
-        //     address opposingToken_,
-        // ) = _correlatedReserves(saleToken, pair);
-        uint256 amountToSwap = saleTokenReserve._calcSwapDepositAmtIn(saleTokenAmount);
-        uint256 saleTokenDeposit = (saleTokenAmount - amountToSwap);
-        uint256 opposingTokenAmount = _swapDirect(
-            IUniswapV2Pair(pair),
+        uint256 amountToSwap = saleTokenReserve
+            ._calcSwapDepositAmtIn(saleTokenAmount);
+        uint256 opposingTokenAmount = pair._swapDirect(
             saleToken,
-            saleTokenAmount
+            amountToSwap
         );
-        lpTokenAmount = _depositDirect(
-            pair,
+        lpTokenAmount = pair._depositDirect(
             saleToken,
             opposingToken_,
-            saleTokenDeposit,
+            (saleTokenAmount - amountToSwap),
             opposingTokenAmount
         );
-    }
-
-    function _withdrawDirect(
-        IUniswapV2Pair pool,
-        uint256 amt
-    ) internal {
-        pool.transfer(address(pool), amt);
-        pool.burn(address(this));
     }
 
 }

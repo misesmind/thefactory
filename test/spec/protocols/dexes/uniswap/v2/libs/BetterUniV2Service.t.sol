@@ -8,7 +8,7 @@ import "thefactory/tokens/erc20/ERC20Test.sol";
 import "thefactory/protocols/tokens/wrappers/weth/9/types/WETH9.sol";
 import "thefactory/protocols/dexes/uniswap/v2/types/UniV2FactoryStub.sol";
 import "thefactory/protocols/dexes/uniswap/v2/types/UniV2Router02Stub.sol";
-import "thefactory/protocols/dexes/uniswap/v2/libs/UniV2Utils.sol";
+// import "thefactory/protocols/dexes/uniswap/v2/libs/UniV2Utils.sol";
 import "thefactory/protocols/dexes/uniswap/v2/libs/BetterUniV2Utils.sol";
 import "thefactory/protocols/dexes/uniswap/v2/libs/BetterUniV2Service.sol";
 
@@ -17,7 +17,7 @@ contract BetterUniV2ServiceTest is BetterTest {
     using BetterMath for uint256;
     using BetterUniV2Utils for uint256;
     using BetterUniV2Service for IUniswapV2Pair;
-    using UniV2Utils for uint256;
+    // using UniV2Utils for uint256;
 
     address market = vm.addr(uint256(bytes32(bytes("market"))));
 
@@ -120,6 +120,109 @@ contract BetterUniV2ServiceTest is BetterTest {
             depositEstimate,
             depositProceeds
         );
+    }
+
+    function test_swapDirect(
+        uint112 amount0In,
+        uint112 token0DepositAmt,
+        uint112 token1depositAmt
+    ) public {
+        console.log("type(uint112).max = %s", type(uint112).max);
+        token0DepositAmt = uint112(bound(
+            token0DepositAmt,
+            ONE_WAD,
+            type(uint112).max / 2
+        ));
+        token1depositAmt = uint112(bound(
+            token1depositAmt,
+            ONE_WAD,
+            type(uint112).max / 2
+        ));
+        token0.mint(token0DepositAmt, address(basePool));
+        token1.mint(token1depositAmt, address(basePool));
+        basePool.mint(address(this));
+        console.log("lpBal = %s", basePool.balanceOf(address(this)));
+        console.log("token 0 lpBal = %s", token0.balanceOf(address(basePool)));
+        console.log("token 1 lpBal = %s", token1.balanceOf(address(basePool)));
+        amount0In = uint112(bound(
+            amount0In,
+            ONE_WAD / 2,
+            (token0DepositAmt / 2)
+        ));
+        console.log("amount0In = %s", amount0In);
+        uint256 amount1Out = BetterUniV2Utils._calcSaleProceeds(
+            amount0In,
+            token0.balanceOf(address(basePool)),
+            token1.balanceOf(address(basePool))
+        );
+        console.log("amount1Out = %s", amount1Out);
+        token0.mint(amount0In, address(this));
+        // basePool.swap(
+        //     0,
+        //     amount1Out,
+        //     address(this),
+        //     ""
+        // );
+        uint256 saleProceeds = basePool._swapDirect(
+            token0,
+            amount0In
+        );
+        // assertEq(
+        //     saleProceeds,
+        //     amount1Out
+        // );
+        assertEq(
+            saleProceeds,
+            token1.balanceOf(address(this))
+        );
+    }
+
+    function test_swapDepositDirect(
+        uint112 amount0In,
+        uint112 token0DepositAmt,
+        uint112 token1depositAmt
+    ) public {
+        console.log("type(uint112).max = %s", type(uint112).max);
+        token0DepositAmt = uint112(bound(
+            token0DepositAmt,
+            TENK_WAD,
+            type(uint112).max / 2
+        ));
+        token1depositAmt = uint112(bound(
+            token1depositAmt,
+            TENK_WAD,
+            type(uint112).max / 2
+        ));
+        token0.mint(token0DepositAmt, address(basePool));
+        token1.mint(token1depositAmt, address(basePool));
+        basePool.mint(address(this));
+        console.log("lpBal = %s", basePool.balanceOf(address(this)));
+        basePool.transfer(market, basePool.balanceOf(address(this)));
+        console.log("token 0 lpBal = %s", token0.balanceOf(address(basePool)));
+        console.log("token 1 lpBal = %s", token1.balanceOf(address(basePool)));
+        amount0In = uint112(bound(
+            amount0In,
+            ONE_WAD / 2,
+            (token0DepositAmt / 4)
+        ));
+        console.log("amount0In = %s", amount0In);
+        basePool.transfer(address(market), basePool.balanceOf(address(this)));
+        token0.mint(amount0In, address(this));
+        uint256 lpProceeds = basePool._swapDepositDirect(
+            token0,
+            amount0In,
+            token0.balanceOf(address(basePool)),
+            token1
+        );
+        // assertLe(
+        //     token0.balanceOf(address(this)),
+        //     1
+        // );
+        assertEq(
+            lpProceeds,
+            basePool.balanceOf(address(this))
+        );
+        // assertTrue(false);
     }
 
 }

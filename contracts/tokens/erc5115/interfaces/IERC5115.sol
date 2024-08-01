@@ -46,7 +46,7 @@ interface IERC5115 {
         uint256 amountTokenToDeposit,
         uint256 minSharesOut,
         bool depositFromInternalBalance
-    ) external returns (uint256 amountSharesOut);
+    ) external returns(uint256 amountSharesOut);
     // end::deposit[]
 
     // tag::redeem[]
@@ -59,7 +59,7 @@ interface IERC5115 {
         address tokenOut,
         uint256 minTokenOut,
         bool burnFromInternalBalance
-    ) external returns (uint256 amountTokenOut);
+    ) external returns(uint256 amountTokenOut);
     // end::redeem[]
 
     // tag::exchangeRate[]
@@ -68,21 +68,21 @@ interface IERC5115 {
      * @dev into asset amount, scaled by a fixed scaling factor of 1e18.
      * @custom:sig exchangeRate()
      */
-    function exchangeRate() external view returns (uint256 res);
+    function exchangeRate() external view returns(uint256 res);
     // end::exchangeRate[]
 
     // tag::getTokensIn[]
     /**
      * @custom:sig getTokensIn()
      */
-    function getTokensIn() external view returns (address[] memory res);
+    function getTokensIn() external view returns(address[] memory res);
     // end::getTokensIn[]
 
     // tag::getTokensOut[]
     /**
      * @custom:sig getTokensOut()
      */
-    function getTokensOut() external view returns (address[] memory res);
+    function getTokensOut() external view returns(address[] memory res);
     // end::getTokensOut[]
 
     // tag::yieldToken[]
@@ -94,7 +94,7 @@ interface IERC5115 {
      * @notice MAY return 0x or zero address if the SY token is natively implemented, and not from wrapping.
      * @custom:sig yieldToken()
      */
-    function yieldToken() external view returns (address);
+    function yieldToken() external view returns(address);
     // end::yieldToken[]
 
     // tag::previewDeposit[]
@@ -104,7 +104,7 @@ interface IERC5115 {
     function previewDeposit(
         address tokenIn,
         uint256 amountTokenToDeposit
-    ) external view returns (uint256 amountSharesOut);
+    ) external view returns(uint256 amountSharesOut);
     // end::previewDeposit[]
 
     // tag::previewRedeem[]
@@ -114,7 +114,7 @@ interface IERC5115 {
     function previewRedeem(
         address tokenOut,
         uint256 amountSharesToRedeem
-    ) external view returns (uint256 amountTokenOut);
+    ) external view returns(uint256 amountTokenOut);
     // end::previewRedeem[]
     
 }
