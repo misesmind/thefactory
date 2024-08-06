@@ -13,6 +13,9 @@ library BetterUniV2Utils {
 
     uint internal constant _MINIMUM_LIQUIDITY = 10**3;
 
+    /**
+     * @dev Provides the LP token mint amount for a given depoosit, reserve, and total supply.
+     */
     function _calcDeposit(
         uint256 amount0Deposit,
         uint256 amount1Deposit,
@@ -29,7 +32,9 @@ library BetterUniV2Utils {
     }
 
     // tag::_quote[]
-    // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
+    /**
+     * @dev Given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
+     */
     function _calcEquiv(
         uint amountA,
         uint reserveA,
@@ -97,6 +102,9 @@ library BetterUniV2Utils {
     }
     // end::_quoteSwapIn[]
 
+    /**
+     * @dev Provides the owned balances of a given liquidity pool reserve.
+     */
     function _calcReserveShares(
         uint256 ownedLPAmount,
         uint256 lpTotalSupply,
