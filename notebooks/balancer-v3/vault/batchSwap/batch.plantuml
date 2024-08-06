@@ -1,0 +1,43 @@
+@startuml
+skinparam shadowing false
+
+actor Caller
+participant BatchRouter
+participant Vault
+
+Caller -> BatchRouter: swapExactIn() or swapExactOut()
+activate BatchRouter
+
+BatchRouter -> Vault: unlock()
+activate Vault
+
+Vault -> BatchRouter: swapExactInHook() or swapExactOutHook()
+activate BatchRouter
+
+loop for each path
+  loop for each step in path
+    alt step is buffer
+      BatchRouter -> Vault: erc4626BufferWrapOrUnwrap()
+    else step token in is BPT
+      BatchRouter -> Vault: removeLiquidity()
+    else step token out is BPT
+      BatchRouter -> Vault: addLiquidity()
+    else regular swap
+      BatchRouter -> Vault: swap()
+    end
+  end
+end
+
+BatchRouter -> BatchRouter: _settlePaths()
+activate BatchRouter
+BatchRouter -> BatchRouter: _takeTokenIn() or _sendTokenOut()
+deactivate BatchRouter
+
+BatchRouter --> Vault: return
+deactivate BatchRouter
+deactivate Vault
+
+BatchRouter --> Caller: return pathAmountsOut/In, tokensOut/In, amountsOut/In
+deactivate BatchRouter
+
+@enduml
