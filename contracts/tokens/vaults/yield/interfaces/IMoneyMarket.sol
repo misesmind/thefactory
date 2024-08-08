@@ -47,6 +47,7 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
      */
     function tokenIdOf(address adaptor)
     external view returns(uint256 tokenId);
+
     // tag::getTokensIn[]
     /**
      * @custom:sig getTokensIn()
