@@ -10,3 +10,6 @@
 [submodule "lib/solplot"]
 	path = lib/solplot
 	url = https://github.com/0xClandestine/solplot
+[submodule "lib/balancer-v3-monorepo"]
+	path = lib/balancer-v3-monorepo
+	url = https://github.com/balancer/balancer-v3-monorepo
