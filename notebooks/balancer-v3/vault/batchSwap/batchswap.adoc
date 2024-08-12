@@ -18,3 +18,7 @@
 . BatchRouter returns the path amounts, tokens, and amounts to the caller.
 
 image::batch.png[BatchSwap flow]
+
+=== SwapExactIn
+
+image::swapExactIn.png[swapExactIn]
