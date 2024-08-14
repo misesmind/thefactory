@@ -90,11 +90,11 @@ abstract contract ERC6909MetadataEnumeratedStorage {
 contract ERC6909MetadataEnumeratedTarget is ERC6909MetadataEnumeratedStorage, ERC6909MetadataTarget, IERC6909MetadataEnumerated {
 
     function nameOfId(uint256 id) public view returns (string memory) {
-        return _ERC6909MetadataEnumerated().nameFor[id];
+        return _erc6909MetadataEnumerated().nameFor[id];
     }
 
     function symbolOfId(uint256 id) public view returns (string memory symbol_) {
-        return _ERC6909MetadataEnumerated().symbolFor[id];
+        return _erc6909MetadataEnumerated().symbolFor[id];
     }
 
 }
