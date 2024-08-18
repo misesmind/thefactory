@@ -134,14 +134,15 @@ ERC6909Target
         functionSelectors_[11] = IERC6909Metadata.decimals.selector;
     }
 
-    function name() public view returns (string memory) {
+    function name() public view virtual returns (string memory) {
         return _erc6909Metadata().name;
     }
 
-    function symbol() public view returns (string memory) {
+    function symbol() public view virtual returns (string memory) {
         return _erc6909Metadata().symbol;
     }
-    function decimals(uint256 id) public view returns (uint8) {
+    
+    function decimals(uint256 id) public view virtual returns (uint8) {
         return _erc6909Metadata().decimalsFor[id];
     }
 

@@ -159,32 +159,32 @@ ERC6909Storage
     }
 
     function totalSupply(uint256 id)
-    public view returns (uint256 amount) {
+    public view virtual returns (uint256 amount) {
         return _erc6909().totalSupplyFor[id];
     }
 
     function balanceOf(address owner, uint256 id)
-    public view returns (uint256 amount) {
+    public view virtual returns (uint256 amount) {
         return _erc6909().balanceForOf[id][owner];
     }
     function allowance(address owner, address spender, uint256 id)
-    public view returns (uint256 amount) {
+    public view virtual returns (uint256 amount) {
         return _erc6909().allowanceOfFor[id][owner][spender];
     }
 
     function isOperator(address owner, address spender)
-    public view returns (bool approved) {
+    public view virtual returns (bool approved) {
         return _erc6909().isOperator[owner][spender];
     }
 
     function transfer(address receiver, uint256 id, uint256 amount)
-    public returns (bool) {
+    public virtual returns (bool) {
         _transfer(msg.sender, receiver, id, amount);
         return true;
     }
 
     function transferFrom(address sender, address receiver, uint256 id, uint256 amount)
-    public returns (bool) {
+    public virtual returns (bool) {
         // Accounts can transferFrom their own tokens from themselves.
         if(sender != msg.sender) {
             if(!_erc6909().isOperator[sender][msg.sender]) {
@@ -198,13 +198,13 @@ ERC6909Storage
     }
 
     function approve(address spender, uint256 id, uint256 amount)
-    public returns (bool) {
+    public virtual returns (bool) {
         _erc6909().allowanceOfFor[id][msg.sender][spender] += amount;
         return true;
     }
 
     function setOperator(address spender, bool approved)
-    public returns (bool) {
+    public virtual returns (bool) {
         _erc6909().isOperator[msg.sender][spender] = approved;
         return true;
     }

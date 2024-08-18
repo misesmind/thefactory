@@ -100,7 +100,7 @@ IERC165, MutableERC165Storage {
      */
     function supportsInterface(
         bytes4 interfaceId
-    ) external view virtual returns (bool isSupported) {
+    ) public view virtual returns (bool isSupported) {
         isSupported = _supportsInterface(interfaceId);
     }
 

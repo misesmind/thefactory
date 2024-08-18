@@ -136,11 +136,11 @@ ERC6909MetadataTarget
         functionSelectors_[11] = IERC6909MetadataEnumerated.symbolOfId.selector;
     }
 
-    function nameOfId(uint256 id) public view returns (string memory) {
+    function nameOfId(uint256 id) public view virtual returns (string memory) {
         return _erc6909MetadataEnumerated().nameFor[id];
     }
 
-    function symbolOfId(uint256 id) public view returns (string memory symbol_) {
+    function symbolOfId(uint256 id) public view virtual returns (string memory symbol_) {
         return _erc6909MetadataEnumerated().symbolFor[id];
     }
 
