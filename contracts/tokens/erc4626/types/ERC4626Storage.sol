@@ -334,7 +334,7 @@ abstract contract ERC4626Storage is ERC20Storage {
         address tokenIn,
         address spender,
         uint256 amountTokenToDeposit
-    ) internal {
+    ) internal virtual {
         IERC20(tokenIn)._safeTransferFrom(spender, address(this), amountTokenToDeposit);
     }
 

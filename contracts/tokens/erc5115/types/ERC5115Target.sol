@@ -164,7 +164,7 @@ abstract contract ERC5115Target is ERC20Target, ERC5115Storage, IERC5115 {
      * @notice MAY return 0x or zero address if the SY token is natively implemented, and not from wrapping.
      * @custom:sig yieldToken()
      */
-    function yieldToken() external view virtual returns (address) {
+    function yieldToken() public view virtual returns (address) {
         return address(_yieldToken());
     }
     // end::yieldToken[]

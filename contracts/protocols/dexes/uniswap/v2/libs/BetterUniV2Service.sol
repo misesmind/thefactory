@@ -97,8 +97,10 @@ library BetterUniV2Service {
         uint256 saleTokenReserve,
         IERC20 opposingToken_
     ) internal returns(uint256 lpTokenAmount) {
-        uint256 amountToSwap = saleTokenReserve
-            ._calcSwapDepositAmtIn(saleTokenAmount);
+        // uint256 amountToSwap = saleTokenReserve
+        //     ._calcSwapDepositAmtIn(saleTokenAmount);
+        uint256 amountToSwap = saleTokenAmount
+            ._calcSwapDepositAmtIn(saleTokenReserve);
         uint256 opposingTokenAmount = pair._swapDirect(
             saleToken,
             amountToSwap
@@ -108,6 +110,44 @@ library BetterUniV2Service {
             opposingToken_,
             (saleTokenAmount - amountToSwap),
             opposingTokenAmount
+        );
+    }
+
+    function _depositDirectTo(
+        IUniswapV2Pair pair,
+        IERC20 tokenA,
+        IERC20 tokenB,
+        uint256 tokenAAmount,
+        uint256 tokenBAmount,
+        address recipient
+    ) internal returns (uint256 lpTokenAmount) {
+        tokenA._safeTransfer(address(pair), tokenAAmount);
+        tokenB._safeTransfer(address(pair), tokenBAmount);
+        lpTokenAmount = pair.mint(recipient);
+    }
+
+    function _swapDepositDirectTo(
+        IUniswapV2Pair pair,
+        IERC20 saleToken,
+        uint256 saleTokenAmount,
+        uint256 saleTokenReserve,
+        IERC20 opposingToken_,
+        address recipient
+    ) internal returns(uint256 lpTokenAmount) {
+        // uint256 amountToSwap = saleTokenReserve
+        //     ._calcSwapDepositAmtIn(saleTokenAmount);
+        uint256 amountToSwap = saleTokenAmount
+            ._calcSwapDepositAmtIn(saleTokenReserve);
+        uint256 opposingTokenAmount = pair._swapDirect(
+            saleToken,
+            amountToSwap
+        );
+        lpTokenAmount = pair._depositDirectTo(
+            saleToken,
+            opposingToken_,
+            (saleTokenAmount - amountToSwap),
+            opposingTokenAmount,
+            recipient
         );
     }
 

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "thefactory/introspection/erc165/mutable/types/MutableERC165Target.sol";
-import "thefactory/tokens/erc6909/interfaces/IERC6909.sol";
-import "thefactory/tokens/erc6909/interfaces/IERC6909MetadataEnumerated.sol";
+import {IERC6909} from "thefactory/tokens/erc6909/interfaces/IERC6909.sol";
+import {IERC6909MetadataEnumerated} from "thefactory/tokens/erc6909/interfaces/IERC6909MetadataEnumerated.sol";
 
 struct ERC6909Layout {
     mapping(uint256 tokenId => uint256 supply) totalSupplyFor;
@@ -88,6 +88,25 @@ abstract contract ERC6909Storage {
         return ERC6909Repo._layout(ERC6909Repo_STORAGE_SLOT);
     }
 
+    function _mint(
+        uint256 tokenId,
+        address account,
+        uint256 amount
+    ) internal {
+        _erc6909().balanceForOf[tokenId][account] += amount;
+        _erc6909().totalSupplyFor[tokenId] += amount;
+    }
+
+    function _burn(
+        uint256 tokenId,
+        address account,
+        uint256 amount
+    ) internal {
+        _erc6909().balanceForOf[tokenId][account] -= amount;
+        _erc6909().totalSupplyFor[tokenId] -= amount;
+    }
+
+
     function _transfer(address sender, address receiver, uint256 id, uint256 amount)
     internal {
         _erc6909().balanceForOf[id][sender] -= amount;
@@ -100,8 +119,8 @@ abstract contract ERC6909Storage {
 contract ERC6909Target
 is
 MutableERC165Target,
-ERC6909Storage,
-IERC6909
+ERC6909Storage
+// IERC6909
 {
 
     /**
@@ -174,7 +193,7 @@ IERC6909
                 _erc6909().allowanceOfFor[id][sender][msg.sender] = spendingLimit_ - amount;
             }
         }
-        _transfer(msg.sender, receiver, id, amount);
+        _transfer(sender, receiver, id, amount);
         return true;
     }
 

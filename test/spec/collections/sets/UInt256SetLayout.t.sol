@@ -14,7 +14,7 @@ import "thefactory/collections/Collections.sol";
  */
 contract UInt256SetLayoutTest is BetterTest {
 
-    using UInt256SetLayout for UInt256Set;
+    using UInt256SetRepo for UInt256Set;
 
     UInt256Set testInstance;
 

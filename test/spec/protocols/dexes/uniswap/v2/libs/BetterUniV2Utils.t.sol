@@ -373,8 +373,8 @@ contract BetterUniV2UtilsTest is BetterTest {
         console.log("amount0In = %s", amount0In);
 
         uint256 amount0SwapAmt = BetterUniV2Utils._calcSwapDepositAmtIn(
-            token0.balanceOf(address(basePool)),
-            amount0In
+            amount0In,
+            token0.balanceOf(address(basePool))
         );
         // 1298074214630144358933410007488625
         // 6347097647126188996340345638430783416
@@ -448,9 +448,9 @@ contract BetterUniV2UtilsTest is BetterTest {
         uint256 token1LPRes = token1.balanceOf(address(basePool));
         uint256 lpSwapDepositProceeds = BetterUniV2Utils._calcSwapDeposit(
             // address lpTotalSupply,
-            basePool.totalSupply(),
             // uint256 saleTokenAmount,
             amount0In,
+            basePool.totalSupply(),
             // uint256 saleTokenReserve,
             token0LPRes,
             // uint256 opposingTokenReserve
@@ -458,8 +458,8 @@ contract BetterUniV2UtilsTest is BetterTest {
         );
 
         uint256 amount0SwapAmt = BetterUniV2Utils._calcSwapDepositAmtIn(
-            token0.balanceOf(address(basePool)),
-            amount0In
+            amount0In,
+            token0.balanceOf(address(basePool))
         );
         // 1298074214630144358933410007488625
         // 6347097647126188996340345638430783416

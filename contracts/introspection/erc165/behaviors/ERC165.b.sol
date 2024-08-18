@@ -14,8 +14,8 @@ import {console} from "forge-std/console.sol";
 contract ERC165Behavior {
 
     using Address for address;
-    using AddressSetLayout for AddressSet;
-    using Bytes4SetLayout for Bytes4Set;
+    using AddressSetRepo for AddressSet;
+    using Bytes4SetRepo for Bytes4Set;
 
     mapping(address => Bytes4Set) internal _expected_supportsInterface;
 

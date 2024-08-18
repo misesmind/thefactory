@@ -49,7 +49,7 @@ library AddressFuzzingLayout {
  */
 contract AddressFuzzingConstraints is Test {
 
-    using AddressSetLayout for AddressSet;
+    using AddressSetRepo for AddressSet;
     using AddressFuzzingLayout for AddressFuzzingStruct;
 
     /* ------------------------------ LIBRARIES ----------------------------- */

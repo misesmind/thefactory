@@ -3,32 +3,31 @@ pragma solidity ^0.8.0;
 
 import {Array} from "../arrays/Array.sol";
 
-    struct StringSet {
-        // 1-indexed to allow 0 to signify nonexistence
-        mapping( string => uint256 ) indexes;
-        string[] values;
-    }
+struct Bytes4Set {
+    // 1-indexed to allow 0 to signify nonexistence
+    mapping( bytes4 => uint256 ) indexes;
+    bytes4[] values;
+}
 
 /**
- * @title StringSetLayout - Struct and atomic operations for a set of string values
+ * @title Bytes4SetRepo - Struct and atomic operations for a set of bytes4 values;
  * @author mises mind <misesmind@proton.me>
  */
-library StringSetLayout {
+library Bytes4SetRepo {
 
     using Array for uint256;
 
     /**
-     * @dev Will rrevert is provided index is out of bounds.
-     * @param set The sotrage struct upon which this function will operate.
-     * @param index The index of the value to be loaded from storage.
-     * @return value The value from the set at the provided index.
+     * @param set The storage pointer of the struct upon which this function should operate.
+     * @param index The index of the value to retrieve.
+     * @return value The value stored under the provided index.
      */
     function _index(
-        StringSet storage set,
+        Bytes4Set storage set,
         uint index
-    ) internal view returns (string memory) {
+    ) internal view returns (bytes4 value) {
         require(set.values.length._isValidIndex(index));
-        return set.values[index];
+        value = set.values[index];
     }
 
     /**
@@ -37,11 +36,11 @@ library StringSetLayout {
      * @return index The index of the value.
      */
     function _indexOf(
-        StringSet storage set,
-        string memory value
-    ) internal view returns (uint) {
+        Bytes4Set storage set,
+        bytes4 value
+    ) internal view returns (uint index) {
         unchecked {
-            return set.indexes[value] - 1;
+            index = set.indexes[value] - 1;
         }
     }
 
@@ -51,9 +50,9 @@ library StringSetLayout {
      * @return isPresent Boolean indicating presence of value in set.
      */
     function _contains(
-        StringSet storage set,
-        string memory value
-    ) internal view returns (bool) {
+        Bytes4Set storage set,
+        bytes4 value
+    ) internal view returns (bool isPresent) {
         return set.indexes[value] != 0;
     }
 
@@ -62,9 +61,9 @@ library StringSetLayout {
      * @return length The "length", quantity of entries, of the provided set.
      */
     function _length(
-        StringSet storage set
-    ) internal view returns (uint) {
-        return set.values.length;
+        Bytes4Set storage set
+    ) internal view returns (uint length) {
+        length = set.values.length;
     }
 
     /**
@@ -79,14 +78,14 @@ library StringSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        StringSet storage set,
-        string memory value
+        Bytes4Set storage set,
+        bytes4 value
     ) internal returns (bool success) {
         if (!_contains(set, value)) {
             set.values.push(value);
             set.indexes[value] = set.values.length;
-        } 
-        success = true;
+        }
+        return true;
     }
 
     /**
@@ -96,13 +95,13 @@ library StringSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        StringSet storage set,
-        string[] memory values
+        Bytes4Set storage set,
+        bytes4[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _add(set, values[iteration]);
         }
-        success = true;
+        return true;
     }
 
     /**
@@ -117,14 +116,14 @@ library StringSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        StringSet storage set,
-        string memory value
-    ) internal returns (bool) {
+        Bytes4Set storage set,
+        bytes4 value
+    ) internal returns (bool success) {
         uint valueIndex = set.indexes[value];
 
         if (valueIndex != 0) {
             uint index = valueIndex - 1;
-            string memory last = set.values[set.values.length - 1];
+            bytes4 last = set.values[set.values.length - 1];
 
             // move last value to now-vacant index
 
@@ -137,7 +136,6 @@ library StringSetLayout {
             delete set.indexes[value];
 
         }
-
         return true;
     }
 
@@ -148,13 +146,13 @@ library StringSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        StringSet storage set,
-        string[] memory values
+        Bytes4Set storage set,
+        bytes4[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _remove(set, values[iteration]);
         }
-        success = true;
+        return true;
     }
 
     /**
@@ -163,8 +161,8 @@ library StringSetLayout {
      * @return array The members of the set copied to memory as an array.
      */
     function _asArray(
-        StringSet storage set
-    ) internal view returns (string[] memory array ) {
+        Bytes4Set storage set
+    ) internal view returns (bytes4[] memory array) {
         array = set.values;
     }
 
@@ -176,8 +174,8 @@ library StringSetLayout {
      * @return values The members of the set copied to memory as an array.
      */
     function _values(
-        StringSet storage set
-    ) internal view returns (string[] storage values) {
+        Bytes4Set storage set
+    ) internal view returns (bytes4[] storage values) {
         values = set.values;
     }
 

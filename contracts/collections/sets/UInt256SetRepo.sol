@@ -3,17 +3,19 @@ pragma solidity ^0.8.0;
 
 import {Array} from "../arrays/Array.sol";
 
-struct Bytes4Set {
-    // 1-indexed to allow 0 to signify nonexistence
-    mapping( bytes4 => uint256 ) indexes;
-    bytes4[] values;
-}
+    struct UInt256Set {
+        // 1-indexed to allow 0 to signify nonexistence
+        mapping( uint256 => uint256 ) indexes;
+        uint256[] values;
+        uint256 maxValue;
+    }
 
 /**
- * @title Bytes4SetLayout - Struct and atomic operations for a set of bytes4 values;
+ * @title UInt256SetRepo - Struct and atomic operations for a set of uint256 values;
  * @author mises mind <misesmind@proton.me>
+ * @dev Tracks the largest value in the Set.
  */
-library Bytes4SetLayout {
+library UInt256SetRepo {
 
     using Array for uint256;
 
@@ -23,11 +25,11 @@ library Bytes4SetLayout {
      * @return value The value stored under the provided index.
      */
     function _index(
-        Bytes4Set storage set,
+        UInt256Set storage set,
         uint index
-    ) internal view returns (bytes4 value) {
+    ) internal view returns (uint256) {
         require(set.values.length._isValidIndex(index));
-        value = set.values[index];
+        return set.values[index];
     }
 
     /**
@@ -36,11 +38,11 @@ library Bytes4SetLayout {
      * @return index The index of the value.
      */
     function _indexOf(
-        Bytes4Set storage set,
-        bytes4 value
-    ) internal view returns (uint index) {
+        UInt256Set storage set,
+        uint256 value
+    ) internal view returns (uint) {
         unchecked {
-            index = set.indexes[value] - 1;
+            return set.indexes[value] - 1;
         }
     }
 
@@ -50,9 +52,9 @@ library Bytes4SetLayout {
      * @return isPresent Boolean indicating presence of value in set.
      */
     function _contains(
-        Bytes4Set storage set,
-        bytes4 value
-    ) internal view returns (bool isPresent) {
+        UInt256Set storage set,
+        uint256 value
+    ) internal view returns (bool) {
         return set.indexes[value] != 0;
     }
 
@@ -61,9 +63,9 @@ library Bytes4SetLayout {
      * @return length The "length", quantity of entries, of the provided set.
      */
     function _length(
-        Bytes4Set storage set
-    ) internal view returns (uint length) {
-        length = set.values.length;
+        UInt256Set storage set
+    ) internal view returns (uint) {
+        return set.values.length;
     }
 
     /**
@@ -78,12 +80,15 @@ library Bytes4SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        Bytes4Set storage set,
-        bytes4 value
-    ) internal returns (bool success) {
+        UInt256Set storage set,
+        uint256 value
+    ) internal returns (bool) {
         if (!_contains(set, value)) {
             set.values.push(value);
             set.indexes[value] = set.values.length;
+            if(set.maxValue < value) {
+                set.maxValue = value;
+            }
         }
         return true;
     }
@@ -95,13 +100,13 @@ library Bytes4SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        Bytes4Set storage set,
-        bytes4[] memory values
+        UInt256Set storage set,
+        uint256[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _add(set, values[iteration]);
         }
-        return true;
+        success = true;
     }
 
     /**
@@ -116,14 +121,14 @@ library Bytes4SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        Bytes4Set storage set,
-        bytes4 value
-    ) internal returns (bool success) {
+        UInt256Set storage set,
+        uint256 value
+    ) internal returns (bool) {
         uint valueIndex = set.indexes[value];
 
         if (valueIndex != 0) {
             uint index = valueIndex - 1;
-            bytes4 last = set.values[set.values.length - 1];
+            uint256 last = set.values[set.values.length - 1];
 
             // move last value to now-vacant index
 
@@ -134,7 +139,6 @@ library Bytes4SetLayout {
 
             set.values.pop();
             delete set.indexes[value];
-
         }
         return true;
     }
@@ -146,13 +150,13 @@ library Bytes4SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        Bytes4Set storage set,
-        bytes4[] memory values
+        UInt256Set storage set,
+        uint256[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
-            _remove(set, values[iteration]);
+        _remove(set, values[iteration]);
         }
-        return true;
+        success = true;
     }
 
     /**
@@ -161,8 +165,8 @@ library Bytes4SetLayout {
      * @return array The members of the set copied to memory as an array.
      */
     function _asArray(
-        Bytes4Set storage set
-    ) internal view returns (bytes4[] memory array) {
+        UInt256Set storage set
+    ) internal view returns (uint256[] storage array) {
         array = set.values;
     }
 
@@ -174,9 +178,19 @@ library Bytes4SetLayout {
      * @return values The members of the set copied to memory as an array.
      */
     function _values(
-        Bytes4Set storage set
-    ) internal view returns (bytes4[] storage values) {
+        UInt256Set storage set
+    ) internal view returns (uint256[] storage values) {
         values = set.values;
+    }
+
+    /**
+     * @param set The storage pointer of the struct upon which this function should operate.
+     * @return maxValue The largest value contained in the provided set.
+     */
+    function _max(
+        UInt256Set storage set
+    ) view internal returns (uint256 maxValue) {
+        maxValue = set.maxValue;
     }
 
 }

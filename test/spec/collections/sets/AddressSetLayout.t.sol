@@ -14,7 +14,7 @@ import "thefactory/collections/Collections.sol";
  */
 contract AddressSetLayoutTest is BetterTest {
 
-    using AddressSetLayout for AddressSet;
+    using AddressSetRepo for AddressSet;
 
     AddressSet testInstance;
 

@@ -153,8 +153,10 @@ library BetterUniV2Utils {
     }
 
     function _calcSwapDepositAmtIn(
-        uint256 reserveIn,
-        uint256 userIn
+        // uint256 reserveIn,
+        uint256 userIn,
+        // uint256 userIn
+        uint256 reserveIn
     ) internal pure returns (uint256 swapAmount_) {
       return (
             BetterMath._sqrt(
@@ -167,12 +169,15 @@ library BetterUniV2Utils {
     }
 
     function _calcSwapDeposit(
-        uint256 lpTotalSupply,
+        // uint256 lpTotalSupply,
         uint256 saleTokenAmount,
+        // uint256 saleTokenAmount,
+        uint256 lpTotalSupply,
         uint256 saleTokenReserve,
         uint256 opposingTokenReserve
     ) internal pure returns(uint256 lpProceeds) {
-        uint256 amountToSwap = _calcSwapDepositAmtIn(saleTokenReserve, saleTokenAmount);
+        // uint256 amountToSwap = _calcSwapDepositAmtIn(saleTokenReserve, saleTokenAmount);
+        uint256 amountToSwap = _calcSwapDepositAmtIn(saleTokenAmount, saleTokenReserve);
         uint256 saleTokenDeposit = saleTokenAmount - amountToSwap;
         uint256 opposingTokenDeposit = _calcSaleProceeds(
             amountToSwap,

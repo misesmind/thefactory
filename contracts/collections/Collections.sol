@@ -5,9 +5,9 @@ import "./arrays/Array.sol";
 import "./sets/Sets.sol";
 
 using Array for uint256;
-using AddressSetLayout for AddressSet;
-using Bytes4SetLayout for Bytes4Set;
-using Bytes12SetLayout for Bytes12Set;
-using Bytes32SetLayout for Bytes32Set;
-using StringSetLayout for StringSet;
-using UInt256SetLayout for UInt256Set;
+using AddressSetRepo for AddressSet;
+using Bytes4SetRepo for Bytes4Set;
+using Bytes12SetRepo for Bytes12Set;
+using Bytes32SetRepo for Bytes32Set;
+using StringSetRepo for StringSet;
+using UInt256SetRepo for UInt256Set;

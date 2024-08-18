@@ -2,95 +2,35 @@
 pragma solidity ^0.8.0;
 
 import {Array} from "../arrays/Array.sol";
-
-struct AddressSet {
-    // 1-indexed to allow 0 to signify nonexistence
-    mapping( address => uint256 ) indexes;
-    // Values in set.
-    address[] values;
-}
+  
+    struct Bytes32Set {
+        // 1-indexed to allow 0 to signify nonexistence
+        mapping( bytes32 => uint256 ) indexes;
+        bytes32[] values;
+    }
 
 /**
- * @title AddressSetLayout - Struct and atomic operations for a set of address values;
+ * @title Bytes32SetRepo - Struct and atomic operations for a set of 32 byte values
  * @author mises mind <misesmind@proton.me>
- * @dev Distinct from OpenZepplin to allow for operations upon an array of the same type.
  */
-library AddressSetLayout {
+library Bytes32SetRepo {
 
     using Array for uint256;
 
-    /* ------------------------- EMBEDDED LIBRARIES ------------------------- */
-
-    // TODO Replace with address of deployed library.
-    // Normally handled by usage as storage slot.
-    // Included to facilitate automated audits.
-    // address constant ARRAY_ID = address(Array);
-    address constant ARRAY_ID = address(uint160(uint256(keccak256(type(Array).creationCode))));
-
-    // tag::slot(AddressSet storage)[]
-    /**
-     * @dev Provides the storage pointer bound to a Struct instance.
-     * @param table Implicit "table" of storage slots defined as this Struct.
-     * @return slot_ The storage slot bound to the provided Struct.
-     * @custom:sig slot(AddressSet storage)
-     * @custom:selector 0x5bbea693
-     */
-    function slot(
-        AddressSet storage table
-    ) external pure returns(bytes32 slot_) {
-        return _slot(table);
-    }
-    // end::slot(AddressSet storage)[]
+    using Bytes32SetRepo for Bytes32Set;
 
     /**
-     * @dev Provides the storage pointer bound to a Struct instance.
-     * @param table Implicit "table" of storage slots defined as this Struct.
-     * @return slot_ The storage slot bound to the provided Struct.
-     */
-    function _slot(
-        AddressSet storage table
-    ) internal pure returns(bytes32 slot_) {
-        assembly{slot_ := table.slot}
-    }
-
-    // tag::layout[]
-    /**
-     * @dev "Binds" this struct to a storage slot.
-     * @param slot_ The first slot to use in the range of slots used by the struct.
-     * @return layout_ A struct from a Layout library bound to the provided slot.
-     * @custom:sig layout(bytes32)
-     * @custom:selector 0x81366cef
-     */
-    function layout(
-        bytes32 slot_
-    ) external pure returns(AddressSet storage layout_) {
-        return _layout(slot_);
-    }
-    // end::layout[]
-
-    /**
-     * @dev "Binds" a struct to a storage slot.
-     * @param storageRange The first slot to use in the range of slots used by the struct.
-     * @return layout_ A struct from a Layout library bound to the provided slot.
-     */
-    function _layout(
-        bytes32 storageRange
-    ) internal pure returns(AddressSet storage layout_) {
-        // storageRange ^= STORAGE_RANGE_OFFSET;
-        assembly{layout_.slot := storageRange}
-    }
-
-    /**
-     * @param set The storage pointer of the struct upon which this function should operate.
-     * @param index The index of the value to retrieve.
-     * @return value The value stored under the provided index.
+     * @dev Will rrevert is provided index is out of bounds.
+     * @param set The sotrage struct upon which this function will operate.
+     * @param index The index of the value to be loaded from storage.
+     * @return value The value from the set at the provided index.
      */
     function _index(
-        AddressSet storage set,
+        Bytes32Set storage set,
         uint index
-    ) internal view returns (address value) {
+    ) internal view returns (bytes32 value) {
         require(set.values.length._isValidIndex(index));
-        return set.values[index];
+        value = set.values[index];
     }
 
     /**
@@ -99,11 +39,11 @@ library AddressSetLayout {
      * @return index The index of the value.
      */
     function _indexOf(
-        AddressSet storage set,
-        address value
+        Bytes32Set storage set,
+        bytes32 value
     ) internal view returns (uint index) {
         unchecked {
-            return set.indexes[value] - 1;
+            index = set.indexes[value] - 1;
         }
     }
 
@@ -113,10 +53,10 @@ library AddressSetLayout {
      * @return isPresent Boolean indicating presence of value in set.
      */
     function _contains(
-        AddressSet storage set,
-        address value
+        Bytes32Set storage set,
+        bytes32 value
     ) internal view returns (bool isPresent) {
-        return set.indexes[value] != 0;
+        isPresent = set.indexes[value] != 0;
     }
 
     /**
@@ -124,9 +64,9 @@ library AddressSetLayout {
      * @return length The "length", quantity of entries, of the provided set.
      */
     function _length(
-        AddressSet storage set
+        Bytes32Set storage set
     ) internal view returns (uint length) {
-        return set.values.length;
+        length = set.values.length;
     }
 
     /**
@@ -141,14 +81,14 @@ library AddressSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        AddressSet storage set,
-        address value
+        Bytes32Set storage set,
+        bytes32 value
     ) internal returns (bool success) {
         if (!_contains(set, value)) {
             set.values.push(value);
             set.indexes[value] = set.values.length;
-        } 
-        return true;
+        }
+        success = true;
     }
 
     /**
@@ -158,13 +98,13 @@ library AddressSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        AddressSet storage set,
-        address[] memory values
+        Bytes32Set storage set,
+        bytes32[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _add(set, values[iteration]);
         }
-        return true;
+        success = true;
     }
 
     /**
@@ -179,14 +119,14 @@ library AddressSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        AddressSet storage set,
-        address value
+        Bytes32Set storage set,
+        bytes32 value
     ) internal returns (bool success) {
         uint valueIndex = set.indexes[value];
 
         if (valueIndex != 0) {
             uint index = valueIndex - 1;
-            address last = set.values[set.values.length - 1];
+            bytes32 last = set.values[set.values.length - 1];
 
             // move last value to now-vacant index
 
@@ -199,8 +139,7 @@ library AddressSetLayout {
             delete set.indexes[value];
 
         }
-
-        return true;
+        success = true;
     }
 
     /**
@@ -210,8 +149,8 @@ library AddressSetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        AddressSet storage set,
-        address[] memory values
+        Bytes32Set storage set,
+        bytes32[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _remove(set, values[iteration]);
@@ -225,8 +164,8 @@ library AddressSetLayout {
      * @return array The members of the set copied to memory as an array.
      */
     function _asArray(
-        AddressSet storage set
-    ) internal view returns (address[] memory array) {
+        Bytes32Set storage set
+    ) internal view returns (bytes32[] memory array) {
         array = set.values;
     }
 
@@ -238,8 +177,8 @@ library AddressSetLayout {
      * @return values The members of the set copied to memory as an array.
      */
     function _values(
-        AddressSet storage set
-    ) internal view returns (address[] storage values) {
+        Bytes32Set storage set
+    ) internal view returns (bytes32[] storage values) {
         values = set.values;
     }
 

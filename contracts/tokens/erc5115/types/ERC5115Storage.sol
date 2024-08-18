@@ -13,11 +13,11 @@ abstract contract ERC5115Storage is ERC4626Storage {
 
     /* ------------------------------ LIBRARIES ----------------------------- */
 
-    using AddressSetLayout for AddressSet;
+    using AddressSetRepo for AddressSet;
 
     /* ------------------------- EMBEDDED LIBRARIES ------------------------- */
 
-    address constant AddressSetLayout_ID = address(uint160(uint256(keccak256(type(AddressSetLayout).creationCode))));
+    address constant AddressSetRepo_ID = address(uint160(uint256(keccak256(type(AddressSetRepo).creationCode))));
     address constant ERC5115SLAYOUT_ID = address(uint160(uint256(keccak256(type(ERC4626Layout).creationCode))));
 
     /* ---------------------------------------------------------------------- */

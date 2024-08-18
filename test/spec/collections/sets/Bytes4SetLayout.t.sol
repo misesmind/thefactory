@@ -14,7 +14,7 @@ import "thefactory/collections/Collections.sol";
  */
 contract Bytes4SetLayoutTest is BetterTest {
 
-    using Bytes4SetLayout for Bytes4Set;
+    using Bytes4SetRepo for Bytes4Set;
 
     Bytes4Set testInstance;
 

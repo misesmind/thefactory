@@ -14,7 +14,7 @@ import "thefactory/collections/Collections.sol";
  */
 contract StringSetLayoutTest is BetterTest {
 
-    using StringSetLayout for StringSet;
+    using StringSetRepo for StringSet;
 
     StringSet testInstance;
 

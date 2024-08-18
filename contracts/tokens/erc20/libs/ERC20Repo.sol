@@ -5,9 +5,9 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC20.sol";
 
-// tag::ERC20Struct[]
+// tag::ERC20Layout[]
 // Named with Struct suffix to ensure no namespace collisions.
-struct ERC20Struct {
+struct ERC20Layout {
     string name;
     string symbol;
     uint8 decimals;
@@ -15,28 +15,28 @@ struct ERC20Struct {
     mapping(address account => uint256 balance) balanceOf;
     mapping(address account => mapping(address spender => uint256 approval)) allowances;
 }
-// end::ERC20Struct[]
+// end::ERC20Layout[]
 
-// tag::ERC20Layout[]
+// tag::ERC20Repo[]
 /**
- * @title ERC20Layout Library to usage the related Struct as a storage layout.
+ * @title ERC20Repo Library to usage the related Struct as a storage layout.
  * @author cyotee dgoe <cyotee@syscoin.org>
  * @notice Simplifies Assembly operations upon the related Struct.
  */
-library ERC20Layout {
+library ERC20Repo {
 
-    using ERC20Layout for ERC20Struct;
+    using ERC20Repo for ERC20Layout;
 
     // tag::slot[]
     /**
      * @dev Provides the storage pointer bound to a Struct instance.
      * @param table Implicit "table" of storage slots defined as this Struct.
      * @return slot_ The storage slot bound to the provided Struct.
-     * @custom:sig slot(ERC20Struct storage)
+     * @custom:sig slot(ERC20Layout storage)
      * @custom:selector 0x5bbea693
      */
     function slot(
-        ERC20Struct storage table
+        ERC20Layout storage table
     ) external pure returns(bytes32 slot_) {
         return _slot(table);
     }
@@ -49,7 +49,7 @@ library ERC20Layout {
      * @return slot_ The storage slot bound to the provided Struct.
      */
     function _slot(
-        ERC20Struct storage table
+        ERC20Layout storage table
     ) internal pure returns(bytes32 slot_) {
         assembly{slot_ := table.slot}
     }
@@ -65,7 +65,7 @@ library ERC20Layout {
      */
     function layout(
         bytes32 slot_
-    ) external pure returns(ERC20Struct storage layout_) {
+    ) external pure returns(ERC20Layout storage layout_) {
         return _layout(slot_);
     }
     // end::layout[]
@@ -78,10 +78,10 @@ library ERC20Layout {
      */
     function _layout(
         bytes32 slot_
-    ) internal pure returns(ERC20Struct storage layout_) {
+    ) internal pure returns(ERC20Layout storage layout_) {
         assembly{layout_.slot := slot_}
     }
     // end::_layout[]
 
 }
-// end::ERC20Layout[]
+// end::ERC20Repo[]

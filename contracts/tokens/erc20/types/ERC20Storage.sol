@@ -6,7 +6,7 @@ import "../../../utils/primitives/Primitives.sol";
 /* ---------------------------------- ERC20 --------------------------------- */
 
 import "../interfaces/IERC20.sol";
-import "../libs/ERC20Layout.sol";
+import "../libs/ERC20Repo.sol";
 
 /**
  * @title ERC20Storage Diamond Storage ERC20 logic.
@@ -18,7 +18,7 @@ abstract contract ERC20Storage is IERC20Errors {
 
     /* ------------------------------ LIBRARIES ----------------------------- */
 
-    using ERC20Layout for ERC20Struct;
+    using ERC20Repo for ERC20Layout;
 
     /* ------------------------- EMBEDDED LIBRARIES ------------------------- */
 
@@ -26,7 +26,7 @@ abstract contract ERC20Storage is IERC20Errors {
     // Normally handled by usage for storage slot.
     // Included to facilitate automated audits.
     // address constant ERC20LAYOUT_ID = address(ERC20Layout);
-    address constant ERC20LAYOUT_ID = address(uint160(uint256(keccak256(type(ERC20Layout).creationCode))));
+    address constant ERC20LAYOUT_ID = address(uint160(uint256(keccak256(type(ERC20Repo).creationCode))));
 
     /* ---------------------------------------------------------------------- */
     /*                                 STORAGE                                */
@@ -50,8 +50,8 @@ abstract contract ERC20Storage is IERC20Errors {
      * @return The default storage range used with repos.
      */
     function _erc20()
-    internal pure virtual returns(ERC20Struct storage) {
-        return ERC20Layout._layout(ERC20_STORAGE_SLOT);
+    internal pure virtual returns(ERC20Layout storage) {
+        return ERC20Repo._layout(ERC20_STORAGE_SLOT);
     }
     // end::_erc20()[]
 

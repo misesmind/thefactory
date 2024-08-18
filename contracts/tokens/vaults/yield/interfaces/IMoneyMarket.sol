@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "thefactory/tokens/erc20/interfaces/IERC20.sol";
 import "thefactory/tokens/erc6909/interfaces/IERC6909MetadataEnumerated.sol";
 
 /**
@@ -25,13 +26,13 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
     function yieldSource()
     external view returns(address source);
 
-    /**
-     * @notice MAY return self to indicate embedded logic.
-     * @notice Adaptor will typically be used with DELEGATECALL.
-     * @return sourceAdaptor_ The contract used to interact with the `yieldSource()`.
-     */
-    function sourceAdaptor()
-    external view returns(address sourceAdaptor_);
+    // /**
+    //  * @notice MAY return self to indicate embedded logic.
+    //  * @notice Adaptor will typically be used with DELEGATECALL.
+    //  * @return sourceAdaptor_ The contract used to interact with the `yieldSource()`.
+    //  */
+    // function sourceAdaptor()
+    // external view returns(address sourceAdaptor_);
 
     /**
      * @param tokenId A token ID for which to query the adaptor contract.
@@ -41,7 +42,8 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
     external view returns(address adaptor);
 
     /**
-     * @dev `tokenId` 0 is reserved for a ERC5115 adaptor for the yieldToken().
+     * @dev Token ID 0 is invalid, reserve to indicate adaptor non-existence.
+     * @dev `tokenId` 1 is reserved for a ERC5115 adaptor for the yieldToken().
      * @param adaptor The adaptor address for which to query the tokenId.
      * @return tokenId A token ID for the `adaptor`.
      */
@@ -64,27 +66,27 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
     external view returns(address[] memory res);
     // end::getTokensOut[]
 
-    // tag::exchangeRate[]
-    /**
-     * @dev This method updates and returns the latest exchange rate, which is the exchange rate from SY token amount
-     * @dev into asset amount, scaled by a fixed scaling factor of 1e18.
-     * @custom:sig exchangeRate()
-     */
-    function exchangeRate(address tokenIn, address tokenOut)
-    external view returns(uint256 res);
-    // end::exchangeRate[]
+    // // tag::exchangeRate[]
+    // /**
+    //  * @dev This method updates and returns the latest exchange rate, which is the exchange rate from SY token amount
+    //  * @dev into asset amount, scaled by a fixed scaling factor of 1e18.
+    //  * @custom:sig exchangeRate()
+    //  */
+    // function exchangeRate(address tokenIn, address tokenOut)
+    // external view returns(uint256 res);
+    // // end::exchangeRate[]
 
-    function exchangeRateTokenToToken(address tokenIn, address tokenOut)
-    external view returns(uint256 res);
+    // function exchangeRateTokenToToken(address tokenIn, address tokenOut)
+    // external view returns(uint256 res);
 
-    function exchangeRateIdToId(uint256 tokenIdIn, uint256 tokenIdOut)
-    external view returns(uint256 res);
+    // function exchangeRateIdToId(uint256 tokenIdIn, uint256 tokenIdOut)
+    // external view returns(uint256 res);
 
-    function exchangeRateTokenToId(address tokenIn, uint256 tokenIdOut)
-    external view returns(uint256 res);
+    // function exchangeRateTokenToId(address tokenIn, uint256 tokenIdOut)
+    // external view returns(uint256 res);
 
-    function exchangeRateIdToToken(uint256 tokenIdIn, address tokenOut)
-    external view returns(uint256 res);
+    // function exchangeRateIdToToken(uint256 tokenIdIn, address tokenOut)
+    // external view returns(uint256 res);
 
     /**
      * @notice Serves as a general deposit/withdraw/swap function.
@@ -97,32 +99,32 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
      * @return amountOut The amount of `tokenOut` credited to the `receipient`.
      */
     function exchangeTokenToToken(
-        address tokenIn,
+        IERC20 tokenIn,
         uint256 amountIn,
-        address tokenOut,
+        IERC20 tokenOut,
         uint256 minAmountOut,
         address recipient,
         bool amtInPreTransfered
     ) external returns(uint256 amountOut);
 
-    /**
-     * @notice Serves as a general deposit/withdraw/swap function.
-     * @param tokenIdIn The token Id to be provided for processing by this contract.
-     * @param amountIn The amount desired to be taken for processing.
-     * @param tokenIdOut The desired token ID of this contract from processing the `tokenIn`.
-     * @param minAmountOut The minimal amount of this token accepted after processing `tokenIn`.
-     * @param recipient The account to receive credit for processing `tokenIn`.
-     * @param amtInPreTransfered Flag indicating if the `tokenIn` has been transfered to this contract.
-     * @return amountOut The amount of `tokenIdOut` credited to the `receipient`.
-     */
-    function exchangeIdToId(
-        uint256 tokenIdIn,
-        uint256 amountIn,
-        uint256 tokenIdOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool amtInPreTransfered
-    ) external returns(uint256 amountOut);
+    // /**
+    //  * @notice Serves as a general deposit/withdraw/swap function.
+    //  * @param tokenIdIn The token Id to be provided for processing by this contract.
+    //  * @param amountIn The amount desired to be taken for processing.
+    //  * @param tokenIdOut The desired token ID of this contract from processing the `tokenIn`.
+    //  * @param minAmountOut The minimal amount of this token accepted after processing `tokenIn`.
+    //  * @param recipient The account to receive credit for processing `tokenIn`.
+    //  * @param amtInPreTransfered Flag indicating if the `tokenIn` has been transfered to this contract.
+    //  * @return amountOut The amount of `tokenIdOut` credited to the `receipient`.
+    //  */
+    // function exchangeIdToId(
+    //     uint256 tokenIdIn,
+    //     uint256 amountIn,
+    //     uint256 tokenIdOut,
+    //     uint256 minAmountOut,
+    //     address recipient,
+    //     bool amtInPreTransfered
+    // ) external returns(uint256 amountOut);
 
     /**
      * @notice Serves as a general deposit/withdraw/swap function.
@@ -143,23 +145,23 @@ interface IMoneyMarket is IERC6909MetadataEnumerated {
         bool amtInPreTransfered
     ) external returns(uint256 amountOut);
 
-    /**
-     * @notice Serves as a general deposit/withdraw/swap function.
-     * @param tokenIdIn The token Id to be provided for processing by this contract.
-     * @param amountIn The amount desired to be taken for processing.
-     * @param tokenOut The desired token from processing the `tokenIn`.
-     * @param minAmountOut The minimal amount of `tokenOut` accepted after processing `tokenIn`.
-     * @param recipient The account to receive `tokenOut` for processing `tokenIn`.
-     * @param amtInPreTransfered Flag indicating if the `tokenIdIn` has been transfered to this contract.
-     * @return amountOut The amount of `tokenOut` credited to the `receipient`.
-     */
-    function exchangeIdToToken(
-        uint256 tokenIdIn,
-        uint256 amountIn,
-        address tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool amtInPreTransfered
-    ) external returns(uint256 amountOut);
+    // /**
+    //  * @notice Serves as a general deposit/withdraw/swap function.
+    //  * @param tokenIdIn The token Id to be provided for processing by this contract.
+    //  * @param amountIn The amount desired to be taken for processing.
+    //  * @param tokenOut The desired token from processing the `tokenIn`.
+    //  * @param minAmountOut The minimal amount of `tokenOut` accepted after processing `tokenIn`.
+    //  * @param recipient The account to receive `tokenOut` for processing `tokenIn`.
+    //  * @param amtInPreTransfered Flag indicating if the `tokenIdIn` has been transfered to this contract.
+    //  * @return amountOut The amount of `tokenOut` credited to the `receipient`.
+    //  */
+    // function exchangeIdToToken(
+    //     uint256 tokenIdIn,
+    //     uint256 amountIn,
+    //     address tokenOut,
+    //     uint256 minAmountOut,
+    //     address recipient,
+    //     bool amtInPreTransfered
+    // ) external returns(uint256 amountOut);
 
 }

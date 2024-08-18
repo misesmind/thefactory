@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "thefactory/tokens/erc6909/types/ERC6909Target.sol";
-import "thefactory/tokens/erc6909/interfaces/IERC6909Metadata.sol";
+import {IERC6909Metadata} from "thefactory/tokens/erc6909/interfaces/IERC6909Metadata.sol";
 
 struct ERC6909MetadataLayout {
     string name;
@@ -88,7 +88,51 @@ abstract contract ERC6909MetadataStorage {
 
 }
 
-contract ERC6909MetadataTarget is ERC6909MetadataStorage, ERC6909Target, IERC6909Metadata {
+contract ERC6909MetadataTarget
+is
+ERC6909MetadataStorage,
+ERC6909Target
+// IERC6909Metadata
+{
+
+    /**
+     * @return supportedInterfaces_ The ERC165 interface IDs implemented in this contract that MAY be used via CALL.
+     * @custom:context-exec SAFE IDEMPOTENT
+     * @custom:context-exec-state SAFE IDEMPOTENT
+     */
+    function _supportedInterfaces()
+    internal pure virtual
+    override(ERC6909Target)
+    returns(bytes4[] memory supportedInterfaces_) {
+        supportedInterfaces_ = new bytes4[](3);
+        // ERC165 support IS Execution Context SAFE and NOT IDEMPOTENT.
+        supportedInterfaces_[0] = type(IERC165).interfaceId;
+        supportedInterfaces_[1] = type(IERC6909).interfaceId;
+        supportedInterfaces_[2] = type(IERC6909Metadata).interfaceId;
+    }
+
+    /**
+     * @return functionSelectors_ The function selectors implemented in this contract that MAY be used via CALL.
+     */
+    function _functionSelectors()
+    internal pure virtual
+    override(ERC6909Target)
+    returns(bytes4[] memory functionSelectors_) {
+        functionSelectors_ = new bytes4[](9);
+        // ERC165 support IS Execution Context SAFE and NOT IDEMPOTENT.
+        functionSelectors_[0] = IERC165.supportsInterface.selector;
+        functionSelectors_[1] = IERC6909.totalSupply.selector;
+        functionSelectors_[2] = IERC6909.balanceOf.selector;
+        functionSelectors_[3] = IERC6909.allowance.selector;
+        functionSelectors_[4] = IERC6909.isOperator.selector;
+        functionSelectors_[5] = IERC6909.transfer.selector;
+        functionSelectors_[6] = IERC6909.transferFrom.selector;
+        functionSelectors_[7] = IERC6909.approve.selector;
+        functionSelectors_[8] = IERC6909.setOperator.selector;
+        functionSelectors_[9] = IERC6909Metadata.name.selector;
+        functionSelectors_[10] = IERC6909Metadata.symbol.selector;
+        functionSelectors_[11] = IERC6909Metadata.decimals.selector;
+    }
 
     function name() public view returns (string memory) {
         return _erc6909Metadata().name;

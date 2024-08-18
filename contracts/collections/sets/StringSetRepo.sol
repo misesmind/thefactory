@@ -3,31 +3,32 @@ pragma solidity ^0.8.0;
 
 import {Array} from "../arrays/Array.sol";
 
-    struct Bytes12Set {
+    struct StringSet {
         // 1-indexed to allow 0 to signify nonexistence
-        mapping( bytes12 => uint256 ) indexes;
-        bytes12[] values;
+        mapping( string => uint256 ) indexes;
+        string[] values;
     }
 
 /**
- * @title Bytes12SetLayout - Struct and atomic operations for a set of bytes12 values;
+ * @title StringSetRepo - Struct and atomic operations for a set of string values
  * @author mises mind <misesmind@proton.me>
  */
-library Bytes12SetLayout {
+library StringSetRepo {
 
     using Array for uint256;
 
     /**
-     * @param set The storage pointer of the struct upon which this function should operate.
-     * @param index The index of the value to retrieve.
-     * @return value The value stored under the provided index.
+     * @dev Will rrevert is provided index is out of bounds.
+     * @param set The sotrage struct upon which this function will operate.
+     * @param index The index of the value to be loaded from storage.
+     * @return value The value from the set at the provided index.
      */
     function _index(
-        Bytes12Set storage set,
+        StringSet storage set,
         uint index
-    ) internal view returns (bytes12 value) {
+    ) internal view returns (string memory) {
         require(set.values.length._isValidIndex(index));
-        value = set.values[index];
+        return set.values[index];
     }
 
     /**
@@ -36,11 +37,11 @@ library Bytes12SetLayout {
      * @return index The index of the value.
      */
     function _indexOf(
-        Bytes12Set storage set,
-        bytes12 value
-    ) internal view returns (uint index) {
+        StringSet storage set,
+        string memory value
+    ) internal view returns (uint) {
         unchecked {
-            index = set.indexes[value] - 1;
+            return set.indexes[value] - 1;
         }
     }
 
@@ -50,9 +51,9 @@ library Bytes12SetLayout {
      * @return isPresent Boolean indicating presence of value in set.
      */
     function _contains(
-        Bytes12Set storage set,
-        bytes12 value
-    ) internal view returns (bool isPresent) {
+        StringSet storage set,
+        string memory value
+    ) internal view returns (bool) {
         return set.indexes[value] != 0;
     }
 
@@ -61,9 +62,9 @@ library Bytes12SetLayout {
      * @return length The "length", quantity of entries, of the provided set.
      */
     function _length(
-        Bytes12Set storage set
-    ) internal view returns (uint length) {
-        length = set.values.length;
+        StringSet storage set
+    ) internal view returns (uint) {
+        return set.values.length;
     }
 
     /**
@@ -78,14 +79,14 @@ library Bytes12SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        Bytes12Set storage set,
-        bytes12 value
+        StringSet storage set,
+        string memory value
     ) internal returns (bool success) {
         if (!_contains(set, value)) {
             set.values.push(value);
             set.indexes[value] = set.values.length;
-        }
-        return true;
+        } 
+        success = true;
     }
 
     /**
@@ -95,13 +96,13 @@ library Bytes12SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _add(
-        Bytes12Set storage set,
-        bytes12[] memory values
+        StringSet storage set,
+        string[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _add(set, values[iteration]);
         }
-        return true;
+        success = true;
     }
 
     /**
@@ -116,14 +117,14 @@ library Bytes12SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        Bytes12Set storage set,
-        bytes12 value
-    ) internal returns (bool success) {
+        StringSet storage set,
+        string memory value
+    ) internal returns (bool) {
         uint valueIndex = set.indexes[value];
 
         if (valueIndex != 0) {
             uint index = valueIndex - 1;
-            bytes12 last = set.values[set.values.length - 1];
+            string memory last = set.values[set.values.length - 1];
 
             // move last value to now-vacant index
 
@@ -136,6 +137,7 @@ library Bytes12SetLayout {
             delete set.indexes[value];
 
         }
+
         return true;
     }
 
@@ -146,13 +148,13 @@ library Bytes12SetLayout {
      * @return success Boolean indicating desired set state has been achieved.
      */
     function _remove(
-        Bytes12Set storage set,
-        bytes12[] memory values
+        StringSet storage set,
+        string[] memory values
     ) internal returns (bool success) {
         for(uint256 iteration = 0; iteration < values.length; iteration++) {
             _remove(set, values[iteration]);
         }
-        return true;
+        success = true;
     }
 
     /**
@@ -161,8 +163,8 @@ library Bytes12SetLayout {
      * @return array The members of the set copied to memory as an array.
      */
     function _asArray(
-        Bytes12Set storage set
-    ) internal view returns (bytes12[] memory array) {
+        StringSet storage set
+    ) internal view returns (string[] memory array ) {
         array = set.values;
     }
 
@@ -174,8 +176,8 @@ library Bytes12SetLayout {
      * @return values The members of the set copied to memory as an array.
      */
     function _values(
-        Bytes12Set storage set
-    ) internal view returns (bytes12[] storage values) {
+        StringSet storage set
+    ) internal view returns (string[] storage values) {
         values = set.values;
     }
 
