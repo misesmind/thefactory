@@ -178,7 +178,7 @@ contract ERC721Storage is ERC20Storage {
         // _owners[tokenId] = to;
         _owner(tokenId, to);
 
-        emit IERC721.Transfer(from, to, tokenId);
+        // emit IERC721.Transfer(from, to, tokenId);
 
         return from;
     }
@@ -330,9 +330,9 @@ contract ERC721Storage is ERC20Storage {
                 revert IERC721Errors.ERC721InvalidApprover(auth);
             }
 
-            if (emitEvent) {
-                emit IERC721.Approval(owner, to, tokenId);
-            }
+            // if (emitEvent) {
+            //     emit IERC721.Approval(owner, to, tokenId);
+            // }
         }
 
         // _tokenApprovals[tokenId] = to;
@@ -353,7 +353,7 @@ contract ERC721Storage is ERC20Storage {
         }
         // _operatorApprovals[owner][operator] = approved;
         _isOperator(owner, operator, approved);
-        emit IERC721.ApprovalForAll(owner, operator, approved);
+        // emit IERC721.ApprovalForAll(owner, operator, approved);
     }
 
     /**

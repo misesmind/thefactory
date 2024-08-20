@@ -6,7 +6,14 @@ import "thefactory/utils/primitives/UInt.sol";
 import "thefactory/introspection/erc165/mutable/types/MutableERC165Target.sol";
 import {IERC721Metadata} from "../interfaces/IERC721Metadata.sol";
 
-abstract contract ERC721Target is MutableERC165Target, ERC721Storage, IERC721, IERC721Metadata, IERC721Errors {
+abstract contract ERC721Target
+is
+MutableERC165Target,
+ERC721Storage,
+IERC721,
+IERC721Metadata,
+IERC721Errors
+{
 
     using UInt for uint256;
 
@@ -53,6 +60,7 @@ abstract contract ERC721Target is MutableERC165Target, ERC721Storage, IERC721, I
      */
     function approve(address to, uint256 tokenId) public virtual {
         _approve(to, tokenId, msg.sender);
+        emit IERC721.Approval(msg.sender, to, tokenId);
     }
 
     /**
@@ -93,6 +101,7 @@ abstract contract ERC721Target is MutableERC165Target, ERC721Storage, IERC721, I
         //     revert ERC721IncorrectOwner(from, tokenId, previousOwner);
         // }
         _transferFrom(from, to, tokenId);
+        emit Transfer(from, to, tokenId);
     }
 
     /**
@@ -100,6 +109,7 @@ abstract contract ERC721Target is MutableERC165Target, ERC721Storage, IERC721, I
      */
     function safeTransferFrom(address from, address to, uint256 tokenId) public virtual {
         _safeTransferFrom(from, to, tokenId, "");
+        emit Transfer(from, to, tokenId);
     }
 
     /**
@@ -110,6 +120,7 @@ abstract contract ERC721Target is MutableERC165Target, ERC721Storage, IERC721, I
         // _transferFrom(from, to, tokenId);
         // _checkOnERC721Received(from, to, tokenId, data);
         _safeTransferFrom(from, to, tokenId, data);
+        emit Transfer(from, to, tokenId);
     }
     
 }

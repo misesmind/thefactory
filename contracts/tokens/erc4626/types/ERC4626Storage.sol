@@ -363,7 +363,7 @@ abstract contract ERC4626Storage is ERC20Storage {
         // IERC20(tokenIn)._safeTransferFrom(payer, address(this), assetAmount);
         _pullDeposit(tokenIn, payer, assetAmount);
         ERC4626Storage._mintShares(amountSharesOut, receiver);
-        emit IERC4626.Deposit(payer, receiver, assetAmount, amountSharesOut);
+        // emit IERC4626.Deposit(payer, receiver, assetAmount, amountSharesOut);
         return amountSharesOut;
     }
 
@@ -396,7 +396,7 @@ abstract contract ERC4626Storage is ERC20Storage {
         sharesOut = _previewWithdraw(assets);
         ERC4626Storage._burnShares(sharesOut, owner);
         IERC20(tokenOut)._safeTransfer(receiver, assets);
-        emit IERC4626.Withdraw(msg.sender, receiver, owner, assets, sharesOut);
+        // emit IERC4626.Withdraw(msg.sender, receiver, owner, assets, sharesOut);
         return sharesOut;
     }
 

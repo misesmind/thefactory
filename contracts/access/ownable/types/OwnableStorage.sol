@@ -44,10 +44,10 @@ abstract contract OwnableStorage {
 
     function _initOwner(address newOwner) internal {
         _ownable().owner = newOwner;
-        emit IOwnable.OwnershipTransfered(
-            address(0),
-            newOwner
-        );
+        // emit IOwnable.OwnershipTransfered(
+        //     address(0),
+        //     newOwner
+        // );
     }
 
     // tag::_ownable()[]
@@ -92,7 +92,7 @@ abstract contract OwnableStorage {
 
     function _transferOwnerShip(address proposedOwner_) internal returns(bool) {
         _ownable().proposedOwner = proposedOwner_;
-        emit IOwnable.TransferProposed(proposedOwner_);
+        // emit IOwnable.TransferProposed(proposedOwner_);
         return true;
     }
 
@@ -101,7 +101,7 @@ abstract contract OwnableStorage {
         address newOwner = _ownable().proposedOwner;
         _ownable().owner = newOwner;
         _ownable().proposedOwner = address(0);
-        emit IOwnable.OwnershipTransfered(prevOwner, newOwner);
+        // emit IOwnable.OwnershipTransfered(prevOwner, newOwner);
         return true;
     }
 
@@ -109,7 +109,7 @@ abstract contract OwnableStorage {
         require(_ownable().proposedOwner == address(0));
         address prevOwner = _ownable().owner;
         _ownable().owner = address(0);
-        emit IOwnable.OwnershipTransfered(prevOwner, address(0));
+        // emit IOwnable.OwnershipTransfered(prevOwner, address(0));
         return true;
     }
     

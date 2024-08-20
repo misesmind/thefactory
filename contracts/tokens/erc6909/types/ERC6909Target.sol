@@ -111,7 +111,7 @@ abstract contract ERC6909Storage {
     internal {
         _erc6909().balanceForOf[id][sender] -= amount;
         _erc6909().balanceForOf[id][receiver] += amount;
-        emit IERC6909.Transfer(sender, receiver, id, amount);
+        // emit IERC6909.Transfer(sender, receiver, id, amount);
     }
 
 }
