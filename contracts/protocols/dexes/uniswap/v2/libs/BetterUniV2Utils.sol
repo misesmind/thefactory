@@ -119,6 +119,11 @@ library BetterUniV2Utils {
         ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
     }
 
+    /**
+     * @dev Calculates the amount of LP to withdraw to extract a desired amount of one token.
+     * @dev Could be done more efficiently with optimized math.
+     */
+    // TODO Optimize math.
     function _calcWithdrawAmt(
         uint256 targetOutAmt,
         uint256 lpTotalSupply,
