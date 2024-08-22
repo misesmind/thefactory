@@ -119,8 +119,8 @@ abstract contract ERC6909Storage {
 contract ERC6909Target
 is
 MutableERC165Target,
-ERC6909Storage
-// IERC6909
+ERC6909Storage,
+IERC6909
 {
 
     /**
@@ -157,6 +157,12 @@ ERC6909Storage
         functionSelectors_[7] = IERC6909.approve.selector;
         functionSelectors_[8] = IERC6909.setOperator.selector;
     }
+    
+    // function supportsInterface(
+    //     bytes4 interfaceId
+    // ) public view virtual override(MutableERC165Target) returns (bool isSupported) {
+    //     return MutableERC165Target.supportsInterface(interfaceId);
+    // }
 
     function totalSupply(uint256 id)
     public view virtual returns (uint256 amount) {

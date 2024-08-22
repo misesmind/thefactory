@@ -100,7 +100,7 @@ IERC165, MutableERC165Storage {
      */
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual returns (bool isSupported) {
+    ) public view virtual override(IERC165) returns (bool isSupported) {
         isSupported = _supportsInterface(interfaceId);
     }
 

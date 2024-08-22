@@ -91,8 +91,8 @@ abstract contract ERC6909MetadataStorage {
 contract ERC6909MetadataTarget
 is
 ERC6909MetadataStorage,
-ERC6909Target
-// IERC6909Metadata
+ERC6909Target,
+IERC6909Metadata
 {
 
     /**
