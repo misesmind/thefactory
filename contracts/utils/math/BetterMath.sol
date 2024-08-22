@@ -67,6 +67,21 @@ library BetterMath {
         return a < b ? a : b;
     }
 
+    function _asc(uint256 a, uint256 b)
+    internal pure returns(uint256 min, uint256 max) {
+        require(a != b);
+        min = a._min(b);
+        max = min == a
+        ? b
+        : a;
+    }
+
+    function _diff(uint256 a, uint256 b)
+    internal pure returns(uint256 diff) {
+        (uint256 min, uint256 max) = a._asc(b);
+        return max - min;
+    }
+
     function _mod(
         uint256 a,
         uint256 b
