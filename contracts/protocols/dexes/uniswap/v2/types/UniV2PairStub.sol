@@ -68,7 +68,7 @@ contract UniV2PairStub is ERC20Target, IUniswapV2Pair {
             IERC20(token1_).symbol()
         );
         _initERC20(
-            string.concat("MockUniV2 Pari of ", symbol_),
+            string.concat("MockUniV2 Pair of ", symbol_),
             symbol_,
             18
         );
