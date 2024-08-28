@@ -240,7 +240,8 @@ contract UniV2PairStub is ERC20Target, IUniswapV2Pair {
     }
 
     // this low-level function should be called from a contract which performs important safety checks
-    function mint(address to) external lock override returns (uint liquidity) {
+    function mint(address to)
+    external lock override returns (uint liquidity) {
         // console.log("UniV2PairStub::mint(address): Entering function.");
         (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
         uint balance0 = IERC20(_token0).balanceOf(address(this));

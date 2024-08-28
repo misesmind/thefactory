@@ -172,7 +172,10 @@ library Bytes {
         return tempUint;
     }
 
-    function toUint256(bytes memory _bytes, uint256 _start) internal pure returns (uint256) {
+    function _toUint256(
+        bytes memory _bytes,
+        uint256 _start
+    ) internal pure returns (uint256) {
         require(_bytes.length >= _start + 32, "toUint256_outOfBounds");
         uint256 tempUint;
 

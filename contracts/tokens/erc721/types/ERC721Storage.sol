@@ -55,7 +55,7 @@ contract ERC721Storage is ERC20Storage {
         return _erc721().approvals[tokenId];
     }
 
-    function _isApproved(
+    function _isApproved(   
         uint256 tokenId,
         address spender
     ) internal {
@@ -195,7 +195,7 @@ contract ERC721Storage is ERC20Storage {
      *
      * Emits a {Transfer} event.
      */
-    function _mint(address to, uint256 tokenId) internal returns (uint256 mintedAmount) {
+    function _mint(address to, uint256 tokenId) internal virtual returns (uint256 mintedAmount) {
         if (to == address(0)) {
             revert IERC721Errors.ERC721InvalidReceiver(address(0));
         }
@@ -216,7 +216,7 @@ contract ERC721Storage is ERC20Storage {
      *
      * Emits a {Transfer} event.
      */
-    function _safeMint(address to, uint256 tokenId) internal {
+    function _safeMint(address to, uint256 tokenId) internal virtual {
         _safeMint(to, tokenId, "");
     }
 
@@ -240,7 +240,7 @@ contract ERC721Storage is ERC20Storage {
      *
      * Emits a {Transfer} event.
      */
-    function _burn(uint256 tokenId) internal {
+    function _burn(uint256 tokenId) internal virtual {
         address previousOwner = _update(address(0), tokenId, address(0));
         if (previousOwner == address(0)) {
             revert IERC721Errors.ERC721NonexistentToken(tokenId);
@@ -258,7 +258,11 @@ contract ERC721Storage is ERC20Storage {
      *
      * Emits a {Transfer} event.
      */
-    function _transfer(address from, address to, uint256 tokenId) internal override(ERC20Storage) {
+    function _transfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC20Storage) {
         if (to == address(0)) {
             revert IERC721Errors.ERC721InvalidReceiver(address(0));
         }
@@ -289,7 +293,7 @@ contract ERC721Storage is ERC20Storage {
      *
      * Emits a {Transfer} event.
      */
-    function _safeTransfer(address from, address to, uint256 tokenId) internal {
+    function _safeTransfer(address from, address to, uint256 tokenId) internal virtual {
         _safeTransfer(from, to, tokenId, "");
     }
 
@@ -401,7 +405,11 @@ contract ERC721Storage is ERC20Storage {
     /**
      * @dev See {IERC721-transferFrom}.
      */
-    function _transferFrom(address from, address to, uint256 tokenId) internal virtual {
+    function _transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual {
         if (to == address(0)) {
             revert IERC721Errors.ERC721InvalidReceiver(address(0));
         }

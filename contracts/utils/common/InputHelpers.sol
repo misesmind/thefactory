@@ -71,7 +71,8 @@ library InputHelpers {
      * This is less efficient for larger token count (i.e., above 4), but such pools should
      * be rare. And in any case, sorting is only done on-chain in test code.
      */
-    function sortTokens(IERC20[] memory tokens) internal pure returns (IERC20[] memory) {
+    function sortTokens(IERC20[] memory tokens)
+    internal pure returns (IERC20[] memory) {
         for (uint256 i = 0; i < tokens.length - 1; ++i) {
             for (uint256 j = 0; j < tokens.length - i - 1; ++j) {
                 if (tokens[j] > tokens[j + 1]) {
