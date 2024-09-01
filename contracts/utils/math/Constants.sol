@@ -15,7 +15,11 @@ uint256 constant HUNDRED_WAD = TEN_WAD * 10;
 uint256 constant ONEK_WAD = HUNDRED_WAD * 10;
 uint256 constant TENK_WAD = ONEK_WAD * 10;
 uint256 constant HUNDREDK_WAD = TENK_WAD * 10;
+uint256 constant FIVE_HUNDREDK_WAD = HUNDREDK_WAD * 5;
+uint256 constant NINE_HUNDREDK_WAD = HUNDREDK_WAD * 9;
+uint256 constant ONEM_WAD_MINUS_1000 = ONEM_WAD - 1000;
 uint256 constant ONEM_WAD = HUNDREDK_WAD * 10;
+uint256 constant TWOM_WAD = ONEM_WAD * 2;
 uint256 constant TENM_WAD = ONEM_WAD * 10;
 uint256 constant HUNDREDM_WAD = TENM_WAD * 10;
 
