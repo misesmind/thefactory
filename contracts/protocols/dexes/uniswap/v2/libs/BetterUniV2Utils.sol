@@ -31,6 +31,43 @@ library BetterUniV2Utils {
             );
     }
 
+    /**
+     * @dev Provides the owned balances of a given liquidity pool reserve.
+     */
+    function _calcWithdraw(
+        uint256 ownedLPAmount,
+        uint256 lpTotalSupply,
+        uint256 totalReserveA,
+        uint256 totalReserveB
+    ) internal pure returns(
+        uint256 ownedReserveA,
+        uint256 ownedReserveB
+    ) {
+        return _calcReserveShares(
+            ownedLPAmount,
+            lpTotalSupply,
+            totalReserveA,
+            totalReserveB
+        );
+    }
+
+    /**
+     * @dev Provides the owned balances of a given liquidity pool reserve.
+     */
+    function _calcReserveShares(
+        uint256 ownedLPAmount,
+        uint256 lpTotalSupply,
+        uint256 totalReserveA,
+        uint256 totalReserveB
+    ) internal pure returns(
+        uint256 ownedReserveA,
+        uint256 ownedReserveB
+    ) {
+        // using balances ensures pro-rata distribution
+        ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
+        ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
+    }
+
     // tag::_quote[]
     /**
      * @dev Given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
@@ -62,7 +99,11 @@ library BetterUniV2Utils {
         // TODO refactor to custom error
         require(amountOut > 0, "BetterUniV2Utils: INSUFFICIENT_OUTPUT_AMOUNT");
         // TODO refactor to custom error
-        require(reserveIn > 0 && reserveOut > 0, "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY");
+        require(
+            reserveIn > 0
+            && reserveOut > 0,
+            "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY"
+        );
         uint numerator = (reserveIn * amountOut) * (1000);
         uint denominator = (reserveOut - amountOut) * (997);
         amountIn = (numerator / denominator) + (1);
@@ -82,41 +123,40 @@ library BetterUniV2Utils {
         uint reserveIn,
         uint reserveOut
     ) internal pure returns (uint amountOut) {
-        console.log("enter _calcSaleProceeds");
+        // console.log("enter _calcSaleProceeds");
         // TODO refactor to custom error
-        console.log("amountIn = %s", amountIn);
+        // console.log("amountIn = %s", amountIn);
         require(amountIn > 0, "BetterUniV2Utils: INSUFFICIENT_INPUT_AMOUNT");
         // TODO refactor to custom error
-        console.log("reserveIn = %s", reserveIn);
-        console.log("reserveOut = %s", reserveOut);
-        require(reserveIn > 0 && reserveOut > 0, "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY");
+        // console.log("reserveIn = %s", reserveIn);
+        // console.log("reserveOut = %s", reserveOut);
+        require(
+            reserveIn > 0 
+            && reserveOut > 0,
+            "BetterUniV2Utils: INSUFFICIENT_LIQUIDITY"
+        );
         uint amountInWithFee = (amountIn * 997);
-        console.log("amountInWithFee = %s", amountInWithFee);
+        // console.log("amountInWithFee = %s", amountInWithFee);
         uint numerator = (amountInWithFee * reserveOut);
-        console.log("numerator = %s", numerator);
+        // console.log("numerator = %s", numerator);
         uint denominator = (reserveIn * 1000) + (amountInWithFee);
-        console.log("denominator = %s", denominator);
+        // console.log("denominator = %s", denominator);
         amountOut = numerator / denominator;
-        console.log("amountOut = %s", amountOut);
-        console.log("exit _calcSaleProceeds");
+        // console.log("amountOut = %s", amountOut);
+        // console.log("exit _calcSaleProceeds");
     }
     // end::_quoteSwapIn[]
 
-    /**
-     * @dev Provides the owned balances of a given liquidity pool reserve.
-     */
-    function _calcReserveShares(
+    function _calcSingleReserveShares(
         uint256 ownedLPAmount,
         uint256 lpTotalSupply,
-        uint256 totalReserveA,
-        uint256 totalReserveB
+        uint256 totalReserveA
     ) internal pure returns(
-        uint256 ownedReserveA,
-        uint256 ownedReserveB
+        uint256 ownedReserveA
     ) {
         // using balances ensures pro-rata distribution
         ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
-        ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
+        // ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
     }
 
     /**
@@ -174,9 +214,7 @@ library BetterUniV2Utils {
     }
 
     function _calcSwapDeposit(
-        // uint256 lpTotalSupply,
         uint256 saleTokenAmount,
-        // uint256 saleTokenAmount,
         uint256 lpTotalSupply,
         uint256 saleTokenReserve,
         uint256 opposingTokenReserve
