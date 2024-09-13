@@ -17,17 +17,17 @@ library BetterUniV2Utils {
      * @dev Provides the LP token mint amount for a given depoosit, reserve, and total supply.
      */
     function _calcDeposit(
-        uint256 amount0Deposit,
-        uint256 amount1Deposit,
+        uint256 amountADeposit,
+        uint256 amountBDeposit,
         uint256 lpTotalSupply,
-        uint256 lpReserve0,
-        uint256 lpReserve1
+        uint256 lpReserveA,
+        uint256 lpReserveB
     ) internal pure returns(uint256 lpAmount) {
          lpAmount = lpTotalSupply == 0
-            ? BetterMath._sqrt((amount0Deposit * amount1Deposit)) - _MINIMUM_LIQUIDITY
+            ? BetterMath._sqrt((amountADeposit * amountBDeposit)) - _MINIMUM_LIQUIDITY
             : BetterMath._min(
-                (amount0Deposit * lpTotalSupply) / lpReserve0,
-                (amount1Deposit * lpTotalSupply) / lpReserve1
+                (amountADeposit * lpTotalSupply) / lpReserveA,
+                (amountBDeposit * lpTotalSupply) / lpReserveB
             );
     }
 
@@ -43,12 +43,23 @@ library BetterUniV2Utils {
         uint256 ownedReserveA,
         uint256 ownedReserveB
     ) {
-        return _calcReserveShares(
-            ownedLPAmount,
-            lpTotalSupply,
-            totalReserveA,
-            totalReserveB
-        );
+        // return _calcReserveShares(
+        //     ownedLPAmount,
+        //     lpTotalSupply,
+        //     totalReserveA,
+        //     totalReserveB
+        // );
+        // using balances ensures pro-rata distribution
+        ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
+        ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
+    }
+
+    function _calcReserveShare(
+        uint256 ownedLPAmount,
+        uint256 lpTotalSupply,
+        uint256 totalReserveA
+    ) internal pure returns(uint256 ownedReserveA) {
+        ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
     }
 
     /**
@@ -198,9 +209,7 @@ library BetterUniV2Utils {
     }
 
     function _calcSwapDepositAmtIn(
-        // uint256 reserveIn,
         uint256 userIn,
-        // uint256 userIn
         uint256 reserveIn
     ) internal pure returns (uint256 swapAmount_) {
       return (
