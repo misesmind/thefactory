@@ -32,6 +32,14 @@ library BetterMath {
         Expand // Away from zero
     }
 
+    /**
+     * @dev Expects percentage to be trailed by 00,
+     */
+    function _percentageAmount(uint256 total_, uint256 percentage_)
+    internal pure returns ( uint256 percentAmount_ ) {
+        return ( ( total_ * percentage_ ) / 1000 );
+    }
+
     function _convertDecimalsFromTo(
         uint256 amount,
         uint8 amountDecimals,
