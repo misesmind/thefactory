@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 library ETHEREUM_MAIN {
-    address constant WETH9 =
-        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     address constant UNIV2_FACTORY = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
 
