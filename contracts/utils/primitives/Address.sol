@@ -121,7 +121,6 @@ library Address {
     function _delegateCall(
         address target
     ) internal {
-
         assembly {
             calldatacopy(0, 0, calldatasize())
             let result := delegatecall(gas(), target, 0, calldatasize(), 0, 0)

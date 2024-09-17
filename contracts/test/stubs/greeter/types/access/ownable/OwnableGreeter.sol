@@ -13,13 +13,9 @@ contract OwnableGreeter is GreeterTarget, OwnableTarget {
     function setMessage(
         string memory newMessage
     ) public virtual override onlyOwner(msg.sender) returns(bool success) {
-        super.setMessage(newMessage);
+        // super.setMessage(newMessage);
+        GreeterTarget.setMessage(newMessage);
         return true;
     }
-
-    // function getMessage()
-    // public view returns(string memory) {
-    //     return super.getMessage();
-    // }
 
 }

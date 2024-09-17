@@ -162,12 +162,12 @@ contract BetterUniV2UtilsTest is BetterTest {
         token0DepositAmt = uint112(bound(
             token0DepositAmt,
             10000,
-            type(uint112).max / 2
+            (type(uint112).max / 2) - 1
         ));
         token1depositAmt = uint112(bound(
             token1depositAmt,
             10000,
-            type(uint112).max / 2
+            (type(uint112).max / 2) - 1
         ));
         token0.mint(token0DepositAmt, address(basePool));
         token1.mint(token1depositAmt, address(basePool));
@@ -178,7 +178,7 @@ contract BetterUniV2UtilsTest is BetterTest {
         amount0Out = uint112(bound(
             amount0Out,
             1,
-            (token0DepositAmt / 2)
+            (token0DepositAmt / 2) - 1
         ));
         // vm.assume(amount0Out < )
         console.log("amount0Out = %s", amount0Out);

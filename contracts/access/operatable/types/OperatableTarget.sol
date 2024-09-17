@@ -114,8 +114,8 @@ IOperatable
         address operator,
         bool status
     ) public virtual
-    onlyOwnerOrOperator(msg.sender)
-    // onlyOwner(msg.sender)
+    // onlyOwnerOrOperator(msg.sender)
+    onlyOwner(msg.sender)
     returns(bool) {
         // require(msg.sender == minter, "Operator: caller is not the minter");
         // operators[operator] = status;
