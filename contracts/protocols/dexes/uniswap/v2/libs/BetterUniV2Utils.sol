@@ -43,13 +43,6 @@ library BetterUniV2Utils {
         uint256 ownedReserveA,
         uint256 ownedReserveB
     ) {
-        // return _calcReserveShares(
-        //     ownedLPAmount,
-        //     lpTotalSupply,
-        //     totalReserveA,
-        //     totalReserveB
-        // );
-        // using balances ensures pro-rata distribution
         ownedReserveA = ((ownedLPAmount * totalReserveA) / lpTotalSupply);
         ownedReserveB = ((ownedLPAmount * totalReserveB) / lpTotalSupply);
     }
