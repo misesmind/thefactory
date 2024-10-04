@@ -23,6 +23,8 @@ uint256 constant TWOM_WAD = ONEM_WAD * 2;
 uint256 constant TENM_WAD = ONEM_WAD * 10;
 uint256 constant HUNDREDM_WAD = TENM_WAD * 10;
 uint256 constant ONEB_WAD = HUNDREDM_WAD * 10;
+uint256 constant TWOB_WAD = ONEB_WAD * 2;
+uint256 constant TENB_WAD = ONEB_WAD * 10;
 
 string constant CSV = ".csv";
 string constant SVG = ".svg";
