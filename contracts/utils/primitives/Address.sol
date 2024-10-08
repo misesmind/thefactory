@@ -134,6 +134,15 @@ library Address {
 
     function _delegateCall(
         address target,
+        bytes memory data
+    ) internal returns(bytes memory returnData) {
+        bool result;
+        (result, returnData) = target.delegatecall(data);
+        require(result == true, "Address:_delegateCall:: delegatecall failed");
+    }
+
+    function _delegateCall(
+        address target,
         bytes4 func,
         bytes memory args
     ) internal returns(bytes memory returnData) {
