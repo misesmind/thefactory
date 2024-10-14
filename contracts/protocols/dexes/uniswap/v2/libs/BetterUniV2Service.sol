@@ -74,6 +74,22 @@ library BetterUniV2Service {
         tokenOut._safeTransfer(recipient, amountOut);
     }
 
+    function withdrawSwapDirectTo(
+        IUniswapV2Pair pool,
+        uint256 amt,
+        IERC20 tokenOut,
+        IERC20 opToken,
+        address recipient
+    ) external returns(uint256 proceedsAmount) {
+        return _withdrawSwapDirectTo(
+            pool,
+            amt,
+            tokenOut,
+            opToken,
+            recipient
+        );
+    }
+
     function _swapDirect(
         IUniswapV2Pair pair,
         IERC20 soldToken,
@@ -170,6 +186,24 @@ library BetterUniV2Service {
             opposingToken_,
             (saleTokenAmount - amountToSwap),
             opposingTokenAmount,
+            recipient
+        );
+    }
+
+    function swapDepositDirectTo(
+        IUniswapV2Pair pair,
+        IERC20 saleToken,
+        uint256 saleTokenAmount,
+        uint256 saleTokenReserve,
+        IERC20 opposingToken_,
+        address recipient
+    ) external returns(uint256 lpTokenAmount) {
+        return _swapDepositDirectTo(
+            pair,
+            saleToken,
+            saleTokenAmount,
+            saleTokenReserve,
+            opposingToken_,
             recipient
         );
     }
